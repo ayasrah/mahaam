@@ -1,0 +1,1 @@
+newman run ./mahaam-api-test/mahaam.postman_collection.json -e ./mahaam-api-test/mahaam_local.postman_environment.json

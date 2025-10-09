@@ -1,0 +1,2208 @@
+{
+  "info": {
+    "_postman_id": "1dcd3371-1468-4a1c-b7bf-d003c5fffb60",
+    "name": "Mahaam",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var res = pm.response.json();",
+                  "",
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    pm.expect(res.apiName).to.be.a('string');",
+                  "    pm.expect(res.apiVersion).to.be.a('string');",
+                  "    pm.expect(res.envName).to.eq(pm.environment.get('env'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/health",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Error",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(201);",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "error",
+                  "value": "POSTMAN: I am an error",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/audit/error",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["audit", "error"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(201);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "info",
+                  "value": "POSTMAN: I am an info",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/audit/info",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["audit", "info"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Delete User1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "sid",
+                  "value": "aw04g_1",
+                  "type": "default"
+                },
+                {
+                  "key": "otp",
+                  "value": "299811",
+                  "type": "default"
+                }
+              ],
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    var rsp = pm.response.json();",
+                  "    pm.environment.set('jwt', rsp.jwt);",
+                  "    pm.environment.set('deviceId', rsp.deviceId);",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uuid = require('uuid');",
+                  "pm.environment.set('deviceSeq', uuid.v4())",
+                  "pm.environment.set('platform', Math.random() * 10 > 5 ? 'android':'iOS')",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "installId",
+                  "value": "{{$guid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "platform",
+                  "value": "{{platform}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceFingerprint",
+                  "value": "{{$guid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceInfo",
+                  "value": "device info...",
+                  "type": "text"
+                },
+                {
+                  "key": "isPhysicalDevice",
+                  "value": "true",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/create",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "create"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send User1 Otp",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName,function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    pm.expect(pm.response.text()).to.be.a('string');",
+                  "    pm.environment.set('sid', pm.response.text());",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email1}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/send-me-otp",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "send-me-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify User1 Otp",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    var rsp = pm.response.json();",
+                  "    pm.environment.set('jwt', rsp.jwt);",
+                  "    pm.environment.set('deviceId', rsp.deviceId);",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uuid = require('uuid');",
+                  "pm.environment.set('deviceSeq', uuid.v4())",
+                  "pm.environment.set('platform', Math.random() * 10 > 5 ? 'android':'iOS')",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email1}}",
+                  "type": "text"
+                },
+                {
+                  "key": "sid",
+                  "value": "aw04g_1",
+                  "type": "text"
+                },
+                {
+                  "key": "otp",
+                  "value": "299811",
+                  "type": "text"
+                },
+                {
+                  "key": "platform",
+                  "value": "{{platform}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceSeq",
+                  "value": "{{deviceSeq}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceInfo",
+                  "value": "device info...",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/verify-otp",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "verify-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Devices User1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    pm.expect(pm.response.json()[0].id).to.be.a('string');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/devices",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "devices"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_user2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "sid",
+                  "value": "aw04g_1",
+                  "type": "default"
+                },
+                {
+                  "key": "otp",
+                  "value": "299811",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    var rsp = pm.response.json();",
+                  "    pm.environment.set('jwt_user2', rsp.jwt);",
+                  "    pm.environment.set('deviceId_user2', rsp.deviceId);",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uuid = require('uuid');",
+                  "pm.environment.set('deviceSeq', uuid.v4())",
+                  "pm.environment.set('platform', Math.random() * 10 > 5 ? 'android':'iOS')",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "installId",
+                  "value": "{{$guid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "platform",
+                  "value": "{{platform}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceFingerprint",
+                  "value": "{{$guid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceInfo",
+                  "value": "device info...",
+                  "type": "text"
+                },
+                {
+                  "key": "isPhysicalDevice",
+                  "value": "true",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/create",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "create"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Otp User2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName,function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    pm.expect(pm.response.text()).to.be.a('string');",
+                  "    pm.environment.set('sid', pm.response.text());",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_user2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email2}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/send-me-otp",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "send-me-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Otp User2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    var rsp = pm.response.json();",
+                  "    pm.environment.set('jwt_user2', rsp.jwt);",
+                  "    pm.environment.set('deviceId_user2', rsp.deviceId);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uuid = require('uuid');",
+                  "pm.environment.set('deviceSeq', uuid.v4())",
+                  "pm.environment.set('platform', Math.random() * 10 > 5 ? 'android':'iOS')",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_user2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email2}}",
+                  "type": "text"
+                },
+                {
+                  "key": "sid",
+                  "value": "aw04g_1",
+                  "type": "text"
+                },
+                {
+                  "key": "otp",
+                  "value": "299811",
+                  "type": "text"
+                },
+                {
+                  "key": "platform",
+                  "value": "{{platform}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceSeq",
+                  "value": "{{deviceSeq}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceInfo",
+                  "value": "device info...",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/verify-otp",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "verify-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout User 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    pm.environment.unset('jwt_user2');",
+                  "    pm.environment.unset('deviceId_user2');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_user2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "deviceId",
+                  "value": "{{deviceId_user2}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/logout",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "logout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User2 2nd",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    var rsp = pm.response.json();",
+                  "    pm.environment.set('jwt_user2', rsp.jwt);",
+                  "    pm.environment.set('deviceId_user2', rsp.deviceId);",
+                  "",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uuid = require('uuid');",
+                  "pm.environment.set('deviceSeq', uuid.v4())",
+                  "pm.environment.set('platform', Math.random() * 10 > 5 ? 'android':'iOS')",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "installId",
+                  "value": "{{$guid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "platform",
+                  "value": "{{platform}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceFingerprint",
+                  "value": "{{$guid}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceInfo",
+                  "value": "device info...",
+                  "type": "text"
+                },
+                {
+                  "key": "isPhysicalDevice",
+                  "value": "true",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/create",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "create"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Otp User2 2nd",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName,function(){",
+                  "    pm.expect([200, 503]).to.include(pm.response.code);",
+                  "    pm.expect(pm.response.text()).to.be.a('string');",
+                  "    pm.environment.set('sid', pm.response.text());",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_user2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email2}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/send-me-otp",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "send-me-otp"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Otp User2 2nd",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    var rsp = pm.response.json();",
+                  "    pm.environment.set('jwt_user2', rsp.jwt);",
+                  "    pm.environment.set('deviceId_user2', rsp.deviceId);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uuid = require('uuid');",
+                  "pm.environment.set('deviceSeq', uuid.v4())",
+                  "pm.environment.set('platform', Math.random() * 10 > 5 ? 'android':'iOS')",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_user2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email2}}",
+                  "type": "text"
+                },
+                {
+                  "key": "sid",
+                  "value": "aw04g_1",
+                  "type": "text"
+                },
+                {
+                  "key": "otp",
+                  "value": "299811",
+                  "type": "text"
+                },
+                {
+                  "key": "platform",
+                  "value": "{{platform}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceSeq",
+                  "value": "{{deviceSeq}}",
+                  "type": "text"
+                },
+                {
+                  "key": "deviceInfo",
+                  "value": "device info...",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users/verify-otp",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users", "verify-otp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Plan",
+      "item": [
+        {
+          "name": "Create",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.test(pm.info.requestName,function(){",
+                  "    pm.expect(pm.response.code).to.eq(201);",
+                  "    var rsp = pm.response.json();",
+                  "    pm.environment.set('planId', rsp);",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"PM: Plan {{$randomInt}}\",\r\n    \"starts\": \"2024-06-18\",\r\n    \"ends\": \"2024-06-20\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.test(pm.info.requestName,function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": \"{{planId}}\",\r\n    \"title\": \"PM: Updated Plan{{$randomInt}}\",\r\n    \"starts\": \"2024-06-18\",\r\n    \"ends\": \"2024-06-20\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get One",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    pm.expect(pm.response.json().id).to.be.a('string');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Main",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    pm.expect(pm.response.json()).to.be.a('array');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans?type=Main",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Main"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Archive",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "type",
+                  "value": "Archived",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/type",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "type"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Archived",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "    pm.expect(pm.response.json()).to.be.a('array');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans?type=Archived",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Archived"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName,function(){",
+                  "    pm.expect(pm.response.code).to.eq(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.test(pm.info.requestName,function(){",
+                  "    pm.expect(pm.response.code).to.eq(201);",
+                  "    var rsp = pm.response.json();",
+                  "    console.log(rsp);",
+                  "    pm.environment.set('planId', rsp);",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"PM: Plan {{$randomInt}}\",\r\n    \"starts\": \"2024-06-18\",\r\n    \"ends\": \"2024-06-20\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reorder Plans",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "oldOrder",
+                  "value": "0",
+                  "type": "default"
+                },
+                {
+                  "key": "newOrder",
+                  "value": "1",
+                  "type": "default"
+                },
+                {
+                  "key": "type",
+                  "value": "Main",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/reorder",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "reorder"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Share",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email2}}",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/share",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "share"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unshare",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email2}}",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/unshare",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "unshare"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Share 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{email2}}",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/share",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "share"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Leave",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_user2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/leave",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "leave"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Task",
+      "item": [
+        {
+          "name": "Create 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(201);",
+                  "    var rsp = pm.response.json();",
+                  "    pm.environment.set('taskId', rsp);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "PM Task {{$randomInt}}",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/tasks",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "tasks"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(201);",
+                  "    var rsp = pm.response.json();",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "PM Task {{$randomInt}}",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/tasks",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "tasks"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/tasks",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "tasks"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reorder",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [""],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "oldOrder",
+                  "value": "0",
+                  "type": "default"
+                },
+                {
+                  "key": "newOrder",
+                  "value": "1",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/tasks/reorder",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "tasks", "reorder"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Done",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "done",
+                  "value": "true",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/tasks/{{taskId}}/done",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "tasks", "{{taskId}}", "done"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Title",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect(pm.response.code).to.eq(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "PM Updated Task {{$randomInt}}",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/tasks/{{taskId}}/title",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "tasks", "{{taskId}}", "title"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName,function(){",
+                  "    pm.expect(pm.response.code).to.eq(204);",
+                  "});",
+                  "",
+                  "// pm.test(`${pm.request.method} ${pm.request.url} ${pm.info.requestName}`,function(){",
+                  "//     pm.expect(pm.response.code).to.eq(200);",
+                  "// });",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "userId",
+                "value": "{{userId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/plans/{{planId}}/tasks/{{taskId}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["plans", "{{planId}}", "tasks", "{{taskId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cleanup",
+      "item": [
+        {
+          "name": "Delete User1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect([204]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "sid",
+                  "value": "aw04g_1",
+                  "type": "default"
+                },
+                {
+                  "key": "otp",
+                  "value": "299811",
+                  "type": "default"
+                }
+              ],
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(pm.info.requestName, function(){",
+                  "    pm.expect([204]).to.include(pm.response.code);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_user2}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "sid",
+                  "value": "aw04g_1",
+                  "type": "default"
+                },
+                {
+                  "key": "otp",
+                  "value": "299811",
+                  "type": "default"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{protocol}}://{{hostUrl}}/users",
+              "protocol": "{{protocol}}",
+              "host": ["{{hostUrl}}"],
+              "path": ["users"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.request.headers.add({",
+          "    key: 'x-app-store',",
+          "    value: 'apple' ",
+          "});",
+          "",
+          "pm.request.headers.add({",
+          "    key: 'x-app-version',",
+          "    value: '1.0.0' ",
+          "});",
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ]
+}
