@@ -1,0 +1,49 @@
+
+# === COMMON IGNORES FOR ALL PROJECTS ===
+
+# Operating System
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment and Config
+.env
+.env.local
+.env.*.local
+config.json
+mahaam_env*
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+
+# Project specific
+.VSCodeCounter/
+
+node_modules/
+
+# Docs
+mahaam-docs/docs/.vitepress/cache/
+
+
+
+
+dist/
+
+tmp/
