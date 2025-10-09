@@ -1,0 +1,152 @@
+:root {
+  --vp-nav-height: 50px;
+}
+
+.VPNav {
+  height: 50px !important;
+}
+
+.VPDoc .content {
+  font-family: "ui-sans-serif", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  font-size: 16px;
+}
+
+.VPSidebar {
+  font-family: sans-serif, "JetBrains Mono", "Fira Code", "Monaco", "Menlo", "Consolas", monospace;
+  padding-top: 45px !important;
+  padding-bottom: 0px !important;
+}
+
+@media (min-width: 960px) {
+  .VPNavBar.has-sidebar .title {
+    background-color: #fafafa !important;
+  }
+  .VPSidebar {
+    background-color: #fafafa !important;
+  }
+  .dark .VPSidebar {
+    background-color: #161618 !important;
+  }
+  .dark .VPNavBar.has-sidebar .title {
+    background-color: #161618 !important;
+  }
+}
+
+.VPSidebarItem .items .VPSidebarItem {
+  height: 24px;
+  padding-left: 3px !important;
+}
+
+.VPSidebarItem {
+  padding-bottom: 0px !important;
+}
+
+.VPSidebarItem .text {
+  padding-bottom: 0px !important;
+  padding-top: 0px !important;
+  font-size: 15px !important;
+}
+
+.VPSidebarItem.is-link.is-active.has-active {
+  background: #e2e9f3 !important;
+  border-radius: 5px !important;
+}
+
+.dark .VPSidebarItem.is-link.is-active.has-active {
+  background: #24242c !important;
+  border-radius: 5px !important;
+}
+
+.VPSidebar * {
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+.VPNavBarSearch {
+  padding-left: 106px;
+}
+
+.VPImage.logo {
+  border-radius: 5px;
+}
+
+.aside-content {
+  display: none !important;
+}
+
+.VPNavBarSearch {
+  flex-grow: unset;
+}
+
+.VPDoc code,
+.VPDoc pre {
+  font-family: "JetBrains Mono", "Fira Code", "Monaco", "Menlo", "Consolas", monospace;
+}
+
+.vp-code-group .tabs label {
+  font-family: "JetBrains Mono", "Fira Code", "Monaco", "Menlo", "Consolas", monospace;
+  line-height: 35px;
+}
+
+.vp-doc p {
+  line-height: 24px;
+}
+
+.vp-doc li + li {
+  margin-top: 4px;
+}
+
+.VPSocialLink {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.VPSocialLink svg,
+.VPSocialLink span {
+  width: 20px !important;
+  height: 20px !important;
+  color: #545454 !important;
+}
+
+.dark .VPSocialLink svg,
+.dark .VPSocialLink span {
+  color: #cccccc !important;
+}
+
+.VPSidebarItem.level-0.is-active > .item .link > .text,
+.VPSidebarItem.level-1.is-active > .item .link > .text,
+.VPSidebarItem.level-2.is-active > .item .link > .text,
+.VPSidebarItem.level-3.is-active > .item .link > .text,
+.VPSidebarItem.level-4.is-active > .item .link > .text,
+.VPSidebarItem.level-5.is-active > .item .link > .text {
+  color: #3451b2 !important;
+  font-weight: 500 !important;
+}
+
+.dark .VPSidebarItem.level-0.is-active > .item .link > .text,
+.dark .VPSidebarItem.level-1.is-active > .item .link > .text,
+.dark .VPSidebarItem.level-2.is-active > .item .link > .text,
+.dark .VPSidebarItem.level-3.is-active > .item .link > .text,
+.dark .VPSidebarItem.level-4.is-active > .item .link > .text,
+.dark .VPSidebarItem.level-5.is-active > .item .link > .text {
+  color: #abbdff !important;
+  font-weight: 500 !important;
+}
+
+.VPSidebarItem.level-1 .text,
+.VPSidebarItem.level-2 .text,
+.VPSidebarItem.level-3 .text,
+.VPSidebarItem.level-4 .text,
+.VPSidebarItem.level-5 .text {
+  font-weight: normal !important;
+  color: #383838 !important;
+}
+
+.dark .VPSidebarItem.level-1 .text,
+.dark .VPSidebarItem.level-2 .text,
+.dark .VPSidebarItem.level-3 .text,
+.dark .VPSidebarItem.level-4 .text,
+.dark .VPSidebarItem.level-5 .text {
+  font-weight: normal !important;
+  color: #cccccc !important;
+}
