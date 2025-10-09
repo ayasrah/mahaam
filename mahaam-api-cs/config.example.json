@@ -1,0 +1,19 @@
+{
+  "apiName": "mahaam-api-cs",
+  "apiVersion": "1.0",
+  "envName": "local",
+  "dbUrl": "host=localhost port=5432 user=postgres password=your_password dbname=mahaam",
+  "httpPort": 7023,
+  "tokenSecretKey": "your-secret-key",
+  "emailAccountSid": "your-twilio-account-sid",
+  "emailVerificationServiceSid": "your-verification-service-sid",
+  "emailAuthToken": "your-auth-token",
+  "testEmails": ["email1@example.com", "email2@example.com", "email3@example.com"],
+  "testSID": "your-test-sid",
+  "testOTP": "your-test-otp",
+  "logFile": "/path/to/log/trace.log",
+  "logFileSizeLimit": 20971520,
+  "logFileCountLimit": 31,
+  "logFileOutputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} {Level:u3} {Message:lj}{NewLine}{Exception}",
+  "logReqEnabled": false
+}
