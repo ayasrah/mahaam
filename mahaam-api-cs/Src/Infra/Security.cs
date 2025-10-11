@@ -82,9 +82,24 @@ class JWT
 
 	public static void Validate(string token)
 	{
-		var tokenHandler = new JwtSecurityTokenHandler();
-		var validationParams = GetValidationParams();
-		tokenHandler.ValidateToken(token, validationParams, out _);
+		try
+		{
+			var tokenHandler = new JwtSecurityTokenHandler();
+			var validationParams = GetValidationParams();
+			tokenHandler.ValidateToken(token, validationParams, out _);
+		}
+		catch (SecurityTokenExpiredException)
+		{
+			throw new UnauthorizedException("Token has expired");
+		}
+		catch (SecurityTokenException)
+		{
+			throw new UnauthorizedException("Invalid token");
+		}
+		catch (Exception)
+		{
+			throw new UnauthorizedException("Token validation failed");
+		}
 	}
 
 	private static TokenValidationParameters GetValidationParams()
