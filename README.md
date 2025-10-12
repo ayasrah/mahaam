@@ -6,11 +6,24 @@ Mahaam is a production and opensourced TODO app built with 5 languages for backe
 
 ### Purpose
 
-I started mahaam around 2021 as a side project to **apply techs I learns on**. I tried Firebase, Firestore, Mongodb, and finally Postgres. For frontend, tried Flutter, for backend started by Java then C# then Go. Then, decided to open source the backend code, and take it one step further by adding Typescript and Python implementations.
+I started mahaam as a side project to **apply techs I learns on**. I tried Firebase, Firestore, Mongodb, and finally Postgres. For frontend, tried Flutter, for backend started by Java then C# then Go. Then, decided to open source the backend code, and take it one step further by adding Typescript and Python implementations.
+
+### Mahaam.dev
+
+I used to be a one language developer for a long time. After some struggles, I learned the hard way that there are things much more important than the language, and these are some:
+
+- Understanding business and user needs.
+- Good data model and UX design.
+- Maintainable codebase.
+- Avoiding overengineering and spagitti coding.
+
+These are topics that I tried to address using Mahaam app regardless the language being used. And for that reason I created [mahaam.dev](https://mahaam.dev).
+
+I’m not saying language doesn’t matter at all, each language shines in its use case and I still prefer some more than others, however, it does not matter a lot for me to work on any language as long as the readability and maintainability are priorities.
 
 ### Explore
 
-Mahaam is available on App Store and Play Store and the docs is available on [mahaam.dev](https://mahaam.dev).
+Mahaam is available on App Store and Play Store.
 
 <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;margin-top: 30px;">
   <a href="https://play.google.com/store/apps/details?id=ayasrah.mahaam" target="_blank" >
