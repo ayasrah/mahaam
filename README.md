@@ -2,29 +2,59 @@
 
 ### Overview
 
-Mahaam is a production and opensourced todo app.
+Mahaam is an open-sourced, production-ready ToDo app implemented in C#, Java, Go, TypeScript, and Python.
 
 ### Purpose
 
-Mahaam is built as a POC for different languages and frameworks. Currently, its implemented in **`C#, Java, Go, Typescript and Python`**.
+I started Mahaam as a proof-of-concept for different technologies and architectures. I wanted it to go deeper than the typical shallow ToDo apps, that's why I added real-world functionalites and pushed it to production to complete the cycle.
+
+### Source Code
+
+Currently, Mahaam is implemented in five languages: **`C#, Java, Go, TypeScript, and Python`** with exact functionality, all expose exact API endpoints and all connected to same database schema.
+
+In the code, I tried to give the value to the business model and maintainability rather than a language or framework, and to address challenges like spaghetti code and overengineering.
 
 ### Mahaam.dev
 
-[Mahaam.dev](https://mahaam.dev) discusses various microservices concepts in the context of Mahaam, and these are some:
+[Mahaam.dev](https://mahaam.dev) spotlights the following backend service concepts through Mahaam.
 
-- Understanding business and user needs.
-- Good data model and UX design.
-- Maintainable codebase.
-- Avoiding overengineering and spagitti coding.
+1. **Service Setup**: App creation.
+2. **Service Design**: Functionality, data model, system design, and maintainability principles.
+3. **Service Module**: Module parts: Controller, Service and Repo.
+4. **Service Infra**: Shared app utilities.
+5. **Service Testing**: Integration tests.
+
+### Philosophy
+
+Maybe one language is better than another for a specific use case; however, these principles are what Mahaam cares about regardless of language or framework, and they are common throughout:
+
+- Does the app meet **business and user** needs.
+- Is the **app model** well designed.
+- Is the codebase readable.
+- Is the codebase **maintainable**.
+- Avoid overengineering (more in Java/C# codebases).
+- Avoid spaghetti code (more in JavaScript codebases).
+
+### Target Audience
+
+Mahaam targets software engineers at all levels.
 
 ### Explore
 
-Mahaam is live (for learning puposes) on the [App Store](https://apps.apple.com/us/app/mahaam/id6502533759) and [Play Store](https://play.google.com/store/apps/details?id=ayasrah.mahaam).
+Mahaam is live on App Store and Play Store and the docs is available on [mahaam.dev](https://mahaam.dev).
 
-### Contributing
+<div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;margin-top: 30px;">
+  <a href="https://play.google.com/store/apps/details?id=ayasrah.mahaam" target="_blank" >
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" style="height: 53px;">
+  </a>
+  <a href="https://apps.apple.com/us/app/mahaam/id6502533759" target="_blank" >
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" style="height: 53px;">
+  </a>
+</div>
 
-Contributions are welcomed, please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+### Sample screens
 
-### License
-
-Mahaam is licensed under [MIT License](LICENSE) by [@ayasrah](https://github.com/ayasrah).
+<div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-top:30px;">
+  <img src="/mahaam-docs/docs/public/plans_screen.jpg" alt="Plans Screen" width="250" style="border: 1px solid #f0f0f0; border-radius:5px;" />
+  <img src="/mahaam-docs/docs/public/tasks_screen.jpg" alt="Tasks Screen" width="250" style="border: 1px solid #f0f0f0; border-radius:5px;" />
+</div>
