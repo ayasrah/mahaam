@@ -2,7 +2,7 @@
 
 ### Overview
 
-Mahaam is a production and opensourced TODO app.
+Mahaam is a production and opensourced todo app.
 
 ### Purpose
 
