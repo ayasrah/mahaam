@@ -2,11 +2,11 @@
 
 ### Overview
 
-Mahaam is a production and opensourced TODO app built with 5 languages for backend: **`C#, Java, Go, Typescript and Python`**.
+Mahaam is a production and opensourced TODO app.
 
 ### Purpose
 
-I started mahaam as a side project to **apply techs I learns on**. I tried Firebase, Firestore, Mongodb, and finally Postgres. For frontend, tried Flutter, for backend started by Java then C# then Go. Then, decided to open source the backend code, and take it one step further by adding Typescript and Python implementations.
+Mahaam is built as a POC for different languages and frameworks. Currently, its implemented in **`C#, Java, Go, Typescript and Python`**.
 
 ### Mahaam.dev
 
