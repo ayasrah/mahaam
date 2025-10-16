@@ -80,7 +80,7 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 
 		if (!bypassAuthPaths.Exists(path.StartsWith))
 		{
-			(Guid userId, Guid deviceId, bool isLoggedIn) = _authService.ValidateAndExtractJwt(context);
+			var (userId, deviceId, isLoggedIn) = _authService.ValidateAndExtractJwt(context);
 			Req.UserId = userId;
 			Req.DeviceId = deviceId;
 			Req.IsLoggedIn = isLoggedIn;

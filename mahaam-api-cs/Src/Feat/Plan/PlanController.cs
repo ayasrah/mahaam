@@ -6,16 +6,16 @@ namespace Mahaam.Feat.Plans;
 
 public interface IPlanController
 {
-	IActionResult Create(PlanIn plan);
-	IActionResult Update(PlanIn plan);
-	IActionResult Delete(Guid id);
-	IActionResult Share(Guid id, string email);
-	IActionResult Unshare(Guid id, string email);
-	IActionResult Leave(Guid id);
-	IActionResult UpdateType(Guid id, string type);
-	IActionResult ReOrder(string type, int oldOrder, int newOrder);
-	IActionResult GetOne(Guid id);
-	IActionResult GetMany(string? type);
+	Task<IActionResult> Create(PlanIn plan);
+	Task<IActionResult> Update(PlanIn plan);
+	Task<IActionResult> Delete(Guid id);
+	Task<IActionResult> Share(Guid id, string email);
+	Task<IActionResult> Unshare(Guid id, string email);
+	Task<IActionResult> Leave(Guid id);
+	Task<IActionResult> UpdateType(Guid id, string type);
+	Task<IActionResult> ReOrder(string type, int oldOrder, int newOrder);
+	Task<IActionResult> GetOne(Guid id);
+	Task<IActionResult> GetMany(string? type);
 }
 
 
@@ -27,107 +27,107 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 
 	[HttpPost]
 	[Consumes(MediaTypeNames.Application.Json)]
-	public IActionResult Create([FromBody] PlanIn plan)
+	public async Task<IActionResult> Create([FromBody] PlanIn plan)
 	{
 		Rule.OneAtLeastRequired([plan.Title, plan.Starts, plan.Ends], "title or starts or ends is required");
 
-		var id = _planService.Create(plan);
+		var id = await _planService.Create(plan);
 		return Created($"/plans/{id}", id);
 	}
 
 	[HttpPut]
 	[Consumes(MediaTypeNames.Application.Json)]
-	public IActionResult Update([FromBody] PlanIn plan)
+	public async Task<IActionResult> Update([FromBody] PlanIn plan)
 	{
 		Rule.Required(plan.Id, "Id");
 		Rule.OneAtLeastRequired([plan.Title, plan.Starts, plan.Ends], "title or starts or ends is required");
 
-		_planService.Update(plan);
+		await _planService.Update(plan);
 		return Ok();
 	}
 
 	[HttpDelete]
 	[Route("{id}")]
-	public IActionResult Delete(Guid id)
+	public async Task<IActionResult> Delete(Guid id)
 	{
 		Rule.Required(id, "id");
-		_planService.Delete(id);
+		await _planService.Delete(id);
 		return NoContent();
 	}
 
 	[HttpPatch]
 	[Route("{id}/share")]
-	public IActionResult Share(Guid id, [FromForm] string email)
+	public async Task<IActionResult> Share(Guid id, [FromForm] string email)
 	{
 		Rule.Required(id, "id");
 		Rule.Required(email, "email");
 
-		_planService.Share(id, email);
+		await _planService.Share(id, email);
 		return Ok();
 	}
 
 	[HttpPatch]
 	[Route("{id}/unshare")]
-	public IActionResult Unshare(Guid id, [FromForm] string email)
+	public async Task<IActionResult> Unshare(Guid id, [FromForm] string email)
 	{
 		Rule.Required(id, "id");
 		Rule.Required(email, "email");
 
-		_planService.Unshare(id, email);
+		await _planService.Unshare(id, email);
 		return Ok();
 	}
 
 	[HttpPatch]
 	[Route("{id}/leave")]
-	public IActionResult Leave(Guid id)
+	public async Task<IActionResult> Leave(Guid id)
 	{
 		Rule.Required(id, "id");
-		_planService.Leave(id);
+		await _planService.Leave(id);
 		return Ok();
 	}
 
 	[HttpPatch]
 	[Route("{id}/type")]
-	public IActionResult UpdateType(Guid id, [FromForm] string type)
+	public async Task<IActionResult> UpdateType(Guid id, [FromForm] string type)
 	{
 		Rule.Required(id, "id");
 		Rule.Required(type, "type");
 		Rule.In(type, PlanType.All);
 
-		_planService.UpdateType(id, type);
+		await _planService.UpdateType(id, type);
 		return Ok();
 	}
 
 	[HttpPatch]
 	[Route("reorder")]
-	public IActionResult ReOrder([FromForm] string type, [FromForm] int oldOrder, [FromForm] int newOrder)
+	public async Task<IActionResult> ReOrder([FromForm] string type, [FromForm] int oldOrder, [FromForm] int newOrder)
 	{
 		Rule.Required(type, "type");
 		Rule.In(type, PlanType.All);
 		Rule.Required(oldOrder, "oldOrder");
 		Rule.Required(newOrder, "newOrder");
-		_planService.ReOrder(type, oldOrder, newOrder);
+		await _planService.ReOrder(type, oldOrder, newOrder);
 		return Ok();
 	}
 
 	[HttpGet]
 	[Route("{id}")]
-	public IActionResult GetOne(Guid id)
+	public async Task<IActionResult> GetOne(Guid id)
 	{
 		Rule.Required(id, "id");
 
-		var plan = _planService.GetOne(id);
+		var plan = await _planService.GetOne(id);
 		return Ok(plan);
 	}
 
 	[HttpGet]
 	[Route("")]
-	public IActionResult GetMany([FromQuery] string? type)
+	public async Task<IActionResult> GetMany([FromQuery] string? type)
 	{
 		if (type is not null) Rule.In(type, PlanType.All);
 		else type = PlanType.Main;
 
-		var plans = _planService.GetMany(type);
+		var plans = await _planService.GetMany(type);
 		return Ok(plans);
 	}
 }

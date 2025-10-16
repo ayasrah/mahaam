@@ -33,11 +33,11 @@ public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo) : IAuth
 		var userId = GetGuidClaim(token, "userId");
 		var deviceId = GetGuidClaim(token, "deviceId");
 
-		var device = _deviceRepo.GetOne(deviceId);
+		var device = _deviceRepo.GetOne(deviceId).GetAwaiter().GetResult();
 		if ((device is null || userId != device.UserId) && !context.Request.Path.Equals("/user/logout"))
 			throw new UnauthorizedException($"Invalid user info");
 
-		var user = _userRepo.GetOne(userId);
+		var user = _userRepo.GetOne(userId).GetAwaiter().GetResult();
 		var isLoggedIn = user is not null && user.Email is not null;
 		return (userId, deviceId, isLoggedIn);
 	}

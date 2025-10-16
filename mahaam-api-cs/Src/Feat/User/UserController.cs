@@ -6,20 +6,20 @@ namespace Mahaam.Feat.Users;
 
 public interface IUserController
 {
-	IActionResult Create(
+	Task<IActionResult> Create(
 		 string platform,
 		 bool isPhysicalDevice,
 		 string deviceFingerprint,
 		 string deviceInfo);
-	IActionResult SendMeOtp(string email);
-	IActionResult VerifyOtp(string email, string sid, string otp);
-	IActionResult RefreshToken();
-	IActionResult UpdateName(string name);
-	IActionResult Logout(Guid deviceId);
-	IActionResult Delete(string sid, string otp);
-	IActionResult GetDevices();
-	IActionResult GetSuggestedEmails();
-	IActionResult DeleteSuggestedEmail(Guid suggestedEmailId);
+	Task<IActionResult> SendMeOtp(string email);
+	Task<IActionResult> VerifyOtp(string email, string sid, string otp);
+	Task<IActionResult> RefreshToken();
+	Task<IActionResult> UpdateName(string name);
+	Task<IActionResult> Logout(Guid deviceId);
+	Task<IActionResult> Delete(string sid, string otp);
+	Task<IActionResult> GetDevices();
+	Task<IActionResult> GetSuggestedEmails();
+	Task<IActionResult> DeleteSuggestedEmail(Guid suggestedEmailId);
 }
 
 [ApiController]
@@ -30,10 +30,10 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	[HttpPost]
 	[EnableRateLimiting("PerUserRateLimit")]
 	[Route("send-me-otp")]
-	public IActionResult SendMeOtp([FromForm] string email)
+	public async Task<IActionResult> SendMeOtp([FromForm] string email)
 	{
 		Rule.ValidateEmail(email);
-		var verificationSid = _userService.SendMeOtp(email);
+		var verificationSid = await _userService.SendMeOtp(email);
 		return Ok(verificationSid);
 
 	}
@@ -41,7 +41,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	[HttpPost]
 	[EnableRateLimiting("PerUserRateLimit")]
 	[Route("create")]
-	public IActionResult Create(
+	public async Task<IActionResult> Create(
 		[FromForm] string platform,
 		[FromForm] bool isPhysicalDevice,
 		[FromForm] string deviceFingerprint,
@@ -55,13 +55,13 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 		Rule.FailIf(!isPhysicalDevice, "Device should be real not simulator");
 		var device = new Device { Platform = platform, Fingerprint = deviceFingerprint, Info = deviceInfo };
 
-		var createdUser = _userService.Create(device);
+		var createdUser = await _userService.Create(device);
 		return Ok(createdUser);
 	}
 
 	[HttpPost]
 	[Route("verify-otp")]
-	public IActionResult VerifyOtp(
+	public async Task<IActionResult> VerifyOtp(
 		[FromForm] string email,
 		[FromForm] string sid,
 		[FromForm] string otp)
@@ -71,69 +71,69 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 		Rule.Required(sid, "sid");
 		Rule.Required(otp, "otp");
 
-		var verifiedUser = _userService.VerifyOtp(email, sid, otp);
+		var verifiedUser = await _userService.VerifyOtp(email, sid, otp);
 
 		return Ok(verifiedUser);
 	}
 
 	[HttpPost]
 	[Route("refresh-token")]
-	public IActionResult RefreshToken()
+	public async Task<IActionResult> RefreshToken()
 	{
-		var verifiedUser = _userService.RefreshToken();
+		var verifiedUser = await _userService.RefreshToken();
 		return Ok(verifiedUser);
 	}
 
 	[HttpPatch]
 	[Route("name")]
-	public IActionResult UpdateName([FromForm] string name)
+	public async Task<IActionResult> UpdateName([FromForm] string name)
 	{
 		Rule.Required(name, "name");
-		_userService.UpdateName(name);
+		await _userService.UpdateName(name);
 		return Ok();
 	}
 
 	[HttpPost]
 	[Route("logout")]
-	public IActionResult Logout([FromForm] Guid deviceId)
+	public async Task<IActionResult> Logout([FromForm] Guid deviceId)
 	{
 		Rule.Required(deviceId, "deviceId");
-		_userService.Logout(deviceId);
+		await _userService.Logout(deviceId);
 		return Ok();
 	}
 
 	[HttpDelete]
 	[Route("")]
-	public IActionResult Delete([FromForm] string sid, [FromForm] string otp)
+	public async Task<IActionResult> Delete([FromForm] string sid, [FromForm] string otp)
 	{
 		Rule.Required(sid, "sid");
 		Rule.Required(otp, "otp");
-		_userService.Delete(sid, otp);
+		await _userService.Delete(sid, otp);
 		return NoContent();
 	}
 
 	[HttpGet]
 	[Route("devices")]
-	public IActionResult GetDevices()
+	public async Task<IActionResult> GetDevices()
 	{
-		var devices = _userService.GetDevices();
+		var devices = await _userService.GetDevices();
 		return Ok(devices);
 	}
 
 	[HttpGet]
 	[Route("suggested-emails")]
-	public IActionResult GetSuggestedEmails()
+	public async Task<IActionResult> GetSuggestedEmails()
 	{
-		var suggestedEmails = _userService.GetSuggestedEmails();
+		var suggestedEmails = await _userService.GetSuggestedEmails();
 		return Ok(suggestedEmails);
 	}
 
 	[HttpDelete]
 	[Route("suggested-emails")]
-	public IActionResult DeleteSuggestedEmail([FromForm] Guid suggestedEmailId)
+	public async Task<IActionResult> DeleteSuggestedEmail([FromForm] Guid suggestedEmailId)
 	{
 		Rule.Required(suggestedEmailId, "suggestedEmailId");
-		_userService.DeleteSuggestedEmail(suggestedEmailId);
+		await _userService.DeleteSuggestedEmail(suggestedEmailId);
 		return NoContent();
 	}
 }

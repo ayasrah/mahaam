@@ -6,16 +6,16 @@ namespace Mahaam.Feat.Users;
 
 public interface IUserService
 {
-	CreatedUser Create(Device device);
-	string? SendMeOtp(string email);
-	VerifiedUser VerifyOtp(string email, string sid, string otp);
-	VerifiedUser RefreshToken();
-	void UpdateName(string name);
-	void Logout(Guid deviceId);
-	void Delete(string sid, string otp);
-	List<Device> GetDevices();
-	List<SuggestedEmail> GetSuggestedEmails();
-	void DeleteSuggestedEmail(Guid suggestedEmailId);
+	Task<CreatedUser> Create(Device device);
+	Task<string?> SendMeOtp(string email);
+	Task<VerifiedUser> VerifyOtp(string email, string sid, string otp);
+	Task<VerifiedUser> RefreshToken();
+	Task UpdateName(string name);
+	Task Logout(Guid deviceId);
+	Task Delete(string sid, string otp);
+	Task<List<Device>> GetDevices();
+	Task<List<SuggestedEmail>> GetSuggestedEmails();
+	Task DeleteSuggestedEmail(Guid suggestedEmailId);
 }
 
 class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo, ISuggestedEmailsRepo suggestedEmailsRepo, ILog log, IAuth auth, IEmail email) : IUserService
@@ -27,15 +27,15 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 	private readonly ILog _log = log;
 	private readonly IAuth _auth = auth;
 	private readonly IEmail _email = email;
-	public CreatedUser Create(Device device)
+	public async Task<CreatedUser> Create(Device device)
 	{
-		using var scope = new TransactionScope();
-		var userId = _userRepo.Create();
+		using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+		var userId = await _userRepo.Create();
 
 		// add device
 		device.UserId = userId;
-		_deviceRepo.DeleteByFingerprint(device.Fingerprint);
-		var deviceId = _deviceRepo.Create(device);
+		await _deviceRepo.DeleteByFingerprint(device.Fingerprint);
+		var deviceId = await _deviceRepo.Create(device);
 
 		string jwt = _auth.CreateToken(userId!.ToString(), deviceId.ToString());
 		scope.Complete();
@@ -44,7 +44,7 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 		return new CreatedUser { Id = userId, DeviceId = deviceId, Jwt = jwt };
 	}
 
-	public string? SendMeOtp(string email)
+	public async Task<string?> SendMeOtp(string email)
 	{
 		string? verifySid;
 		if (Config.TestEmails.Contains(email)) verifySid = Config.TestSID;
@@ -55,7 +55,7 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 		return verifySid;
 	}
 
-	public VerifiedUser VerifyOtp(string email, string sid, string otp)
+	public async Task<VerifiedUser> VerifyOtp(string email, string sid, string otp)
 	{
 		string otpStatus;
 		if (Config.TestEmails.Contains(email) && sid.Equals(Config.TestSID) && otp.Equals(Config.TestOTP))
@@ -66,26 +66,26 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 		if (!"approved".Equals(otpStatus))
 			throw new ArgumentException($"OTP not verified for {email}, status: {otpStatus}");
 
-		using var scope = new TransactionScope();
-		var user = _userRepo.GetOne(email);
+		using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+		var user = await _userRepo.GetOne(email);
 		var deviceId = Req.DeviceId;
 		if (user is null)
 		{
-			_userRepo.UpdateEmail(Req.UserId, email);
+			await _userRepo.UpdateEmail(Req.UserId, email);
 			_log.Info($"User loggedIn for {email}");
 		}
 		else
 		{
 			// move plans of current user to the one with email
-			_planRepo.UpdateUserId(Req.UserId, user.Id);
-			var devices = _deviceRepo.GetMany(user.Id);
+			await _planRepo.UpdateUserId(Req.UserId, user.Id);
+			var devices = await _deviceRepo.GetMany(user.Id);
 			if (devices != null && devices.Count >= 5)
 			{
-				_deviceRepo.Delete(devices.Last().Id);
+				await _deviceRepo.Delete(devices.Last().Id);
 			}
 
-			_deviceRepo.UpdateUserId(deviceId, user.Id);
-			_userRepo.Delete(Req.UserId);
+			await _deviceRepo.UpdateUserId(deviceId, user.Id);
+			await _userRepo.Delete(Req.UserId);
 			_log.Info($"Merging userId:{Req.UserId} to {user.Id}");
 		}
 
@@ -98,38 +98,38 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 		return new VerifiedUser { UserId = newUserId, DeviceId = deviceId, Jwt = jwt, UserFullName = user?.Name, Email = email };
 	}
 
-	public VerifiedUser RefreshToken()
+	public async Task<VerifiedUser> RefreshToken()
 	{
-		var user = _userRepo.GetOne(Req.UserId);
+		var user = await _userRepo.GetOne(Req.UserId);
 		string jwt = _auth.CreateToken(Req.UserId.ToString(), Req.DeviceId.ToString());
 
 		return new VerifiedUser { UserId = Req.UserId, DeviceId = Req.DeviceId, Jwt = jwt, UserFullName = user?.Name, Email = user?.Email };
 	}
 
-	public void UpdateName(string name)
+	public async Task UpdateName(string name)
 	{
-		_userRepo.UpdateName(Req.UserId, name);
+		await _userRepo.UpdateName(Req.UserId, name);
 	}
 
-	public void Logout(Guid deviceId)
+	public async Task Logout(Guid deviceId)
 	{
-		var device = _deviceRepo.GetOne(deviceId);
+		var device = await _deviceRepo.GetOne(deviceId);
 		if (device is null || !device.UserId.Equals(Req.UserId))
 			throw new UnauthorizedException("Invalid deviceId");
-		_deviceRepo.Delete(deviceId);
+		await _deviceRepo.Delete(deviceId);
 	}
 
-	public void DeleteSuggestedEmail(Guid suggestedEmailId)
+	public async Task DeleteSuggestedEmail(Guid suggestedEmailId)
 	{
-		var suggestedEmail = _suggestedEmailsRepo.GetOne(suggestedEmailId);
+		var suggestedEmail = await _suggestedEmailsRepo.GetOne(suggestedEmailId);
 		if (suggestedEmail is null || !suggestedEmail.UserId.Equals(Req.UserId))
 			throw new UnauthorizedException("Invalid suggestedEmailId");
-		_suggestedEmailsRepo.Delete(suggestedEmailId);
+		await _suggestedEmailsRepo.Delete(suggestedEmailId);
 	}
 
-	public void Delete(string sid, string otp)
+	public async Task Delete(string sid, string otp)
 	{
-		var user = _userRepo.GetOne(Req.UserId);
+		var user = await _userRepo.GetOne(Req.UserId);
 
 		string otpStatus;
 		if (user.Email != null && Config.TestEmails.Contains(user.Email) && sid.Equals(Config.TestSID) && otp.Equals(Config.TestOTP))
@@ -140,21 +140,21 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 		if (!"approved".Equals(otpStatus))
 			throw new ArgumentException($"OTP not approved for {user.Email ?? "unknown"}, status: {otpStatus}");
 
-		using var scope = new TransactionScope();
+		using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
 		if (user.Email != null)
-			_suggestedEmailsRepo.DeleteManyByEmail(user.Email);
-		_userRepo.Delete(Req.UserId);
+			await _suggestedEmailsRepo.DeleteManyByEmail(user.Email);
+		await _userRepo.Delete(Req.UserId);
 		scope.Complete();
 	}
 
-	public List<Device> GetDevices()
+	public async Task<List<Device>> GetDevices()
 	{
-		return _deviceRepo.GetMany(Req.UserId);
+		return await _deviceRepo.GetMany(Req.UserId);
 	}
 
-	public List<SuggestedEmail> GetSuggestedEmails()
+	public async Task<List<SuggestedEmail>> GetSuggestedEmails()
 	{
-		return _suggestedEmailsRepo.GetMany(Req.UserId);
+		return await _suggestedEmailsRepo.GetMany(Req.UserId);
 	}
 }
