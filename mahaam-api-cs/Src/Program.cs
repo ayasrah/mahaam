@@ -1,6 +1,9 @@
 using System.Net;
 using System.Reflection;
 using System.Threading.RateLimiting;
+using Mahaam.Feat.Plans;
+using Mahaam.Feat.Tasks;
+using Mahaam.Feat.Users;
 using Mahaam.Infra;
 using Mahaam.Infra.Monitoring;
 using Microsoft.Extensions.Options;
@@ -72,14 +75,12 @@ services.AddRateLimiter(options =>
 	});
 });
 
-DI.Init(services);
+_addServices(services);
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();
 app.UsePathBase(new PathString("/mahaam-api"));
-
 app.UseMiddleware<AppMiddleware>();
-
 app.UseCors("AllowAll");
 if ("local".Equals(settings.Api.EnvName))
 {
@@ -96,5 +97,26 @@ Starter.Init(app);
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 app.Run();
-// executed when app is stopped
 app.Services.GetService<IHealthService>()?.ServerStopped();
+
+
+static void _addServices(IServiceCollection services)
+{
+	services.AddSingleton<IAuth, Auth>();
+	services.AddSingleton<ILog, Mahaam.Infra.Log>();
+	services.AddSingleton<IEmail, Email>();
+	services.AddSingleton<IDB, DB>();
+	services.AddSingleton<IPlanRepo, PlanRepo>();
+	services.AddSingleton<IPlanMembersRepo, PlanMembersRepo>();
+	services.AddSingleton<ITaskRepo, TaskRepo>();
+	services.AddSingleton<IUserRepo, UserRepo>();
+	services.AddSingleton<IDeviceRepo, DeviceRepo>();
+	services.AddSingleton<ISuggestedEmailsRepo, SuggestedEmailsRepo>();
+	services.AddSingleton<IHealthRepo, HealthRepo>();
+	services.AddSingleton<ITrafficRepo, TrafficRepo>();
+	services.AddSingleton<ILogRepo, LogRepo>();
+	services.AddSingleton<IPlanService, PlanService>();
+	services.AddSingleton<ITaskService, TaskService>();
+	services.AddSingleton<IUserService, UserService>();
+	services.AddSingleton<IHealthService, HealthService>();
+}
