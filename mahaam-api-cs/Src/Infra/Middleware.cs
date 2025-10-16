@@ -6,12 +6,13 @@ using Mahaam.Infra.Monitoring;
 
 namespace Mahaam.Infra;
 
-public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog log, IAuth authService)
+public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog log, IAuth authService, Settings settings)
 {
 	private readonly RequestDelegate _next = next;
 	private readonly ITrafficRepo _trafficRepo = trafficRepo;
 	private readonly ILog _log = log;
 	private readonly IAuth _authService = authService;
+	private readonly Settings _settings = settings;
 	public async Task Invoke(HttpContext context)
 	{
 		var stopwatch = new Stopwatch();
@@ -24,7 +25,7 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 		try
 		{
 
-			if (Config.LogReqEnabled)
+			if (_settings.LogReqEnabled)
 			{
 				// expensive operation, only used if needed
 				context.Request.EnableBuffering();
@@ -34,7 +35,7 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 		}
 		catch (Exception e)
 		{
-			if (Config.LogReqEnabled)
+			if (_settings.LogReqEnabled)
 			{
 				context.Request.Body.Position = 0;
 				request = await GetReqBody(context.Request);

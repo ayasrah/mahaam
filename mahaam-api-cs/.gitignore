@@ -30,7 +30,7 @@ mono_crash.*
 # Environment and Config
 .env.local
 .env.*.local
-config.json
+appsettings.json
 mahaam_env*
 
 # Build Results

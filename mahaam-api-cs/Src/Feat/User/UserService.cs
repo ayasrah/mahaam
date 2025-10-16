@@ -18,7 +18,7 @@ public interface IUserService
 	Task DeleteSuggestedEmail(Guid suggestedEmailId);
 }
 
-class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo, ISuggestedEmailsRepo suggestedEmailsRepo, ILog log, IAuth auth, IEmail email) : IUserService
+class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo, ISuggestedEmailsRepo suggestedEmailsRepo, ILog log, IAuth auth, IEmail email, Settings settings) : IUserService
 {
 	private readonly IUserRepo _userRepo = userRepo;
 	private readonly IDeviceRepo _deviceRepo = deviceRepo;
@@ -27,6 +27,7 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 	private readonly ILog _log = log;
 	private readonly IAuth _auth = auth;
 	private readonly IEmail _email = email;
+	private readonly Settings _settings = settings;
 	public async Task<CreatedUser> Create(Device device)
 	{
 		using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
@@ -47,7 +48,7 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 	public async Task<string?> SendMeOtp(string email)
 	{
 		string? verifySid;
-		if (Config.TestEmails.Contains(email)) verifySid = Config.TestSID;
+		if (_settings.Email.TestEmails.Contains(email)) verifySid = _settings.Email.TestSID;
 		else verifySid = _email.SendOtp(email);
 
 		if (verifySid != null) _log.Info($"OTP sent to {email}");
@@ -58,7 +59,7 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 	public async Task<VerifiedUser> VerifyOtp(string email, string sid, string otp)
 	{
 		string otpStatus;
-		if (Config.TestEmails.Contains(email) && sid.Equals(Config.TestSID) && otp.Equals(Config.TestOTP))
+		if (_settings.Email.TestEmails.Contains(email) && sid.Equals(_settings.Email.TestSID) && otp.Equals(_settings.Email.TestOTP))
 			otpStatus = "approved";
 		else
 			otpStatus = _email.VerifyOtp(otp, sid, email);
@@ -132,7 +133,7 @@ class UserService(IUserRepo userRepo, IDeviceRepo deviceRepo, IPlanRepo planRepo
 		var user = await _userRepo.GetOne(Req.UserId);
 
 		string otpStatus;
-		if (user.Email != null && Config.TestEmails.Contains(user.Email) && sid.Equals(Config.TestSID) && otp.Equals(Config.TestOTP))
+		if (user.Email != null && _settings.Email.TestEmails.Contains(user.Email) && sid.Equals(_settings.Email.TestSID) && otp.Equals(_settings.Email.TestOTP))
 			otpStatus = "approved";
 		else
 			otpStatus = _email.VerifyOtp(otp, sid, user.Email ?? string.Empty);

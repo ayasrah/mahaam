@@ -13,10 +13,11 @@ public interface IAuth
 	string CreateToken(string userId, string deviceId);
 }
 
-public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo) : IAuth
+public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo, Settings settings) : IAuth
 {
 	private readonly IDeviceRepo _deviceRepo = deviceRepo;
 	private readonly IUserRepo _userRepo = userRepo;
+	private readonly Settings _settings = settings;
 	public (Guid, Guid, bool) ValidateAndExtractJwt(HttpContext context)
 	{
 		string? authorization = context.Request.Headers.Authorization;
@@ -26,7 +27,7 @@ public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo) : IAuth
 		}
 		string tokenString = authorization[7..]; // Remove 'Bearer ' to get the jwt
 
-		JWT.Validate(tokenString);
+		ValidateJwt(tokenString);
 		var token = new JwtSecurityToken(tokenString);
 
 
@@ -56,15 +57,6 @@ public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo) : IAuth
 
 	public string CreateToken(string userId, string deviceId)
 	{
-		return JWT.Create(userId, deviceId);
-	}
-}
-
-
-class JWT
-{
-	public static string Create(string userId, string deviceId)
-	{
 		try
 		{
 			var creds = new SigningCredentials(SecurityKey(), SecurityAlgorithms.HmacSha256);
@@ -89,7 +81,7 @@ class JWT
 		}
 	}
 
-	public static void Validate(string token)
+	public void ValidateJwt(string token)
 	{
 		try
 		{
@@ -111,7 +103,7 @@ class JWT
 		}
 	}
 
-	private static TokenValidationParameters GetValidationParams()
+	private TokenValidationParameters GetValidationParams()
 	{
 		return new TokenValidationParameters()
 		{
@@ -123,9 +115,11 @@ class JWT
 		};
 	}
 
-	private static SymmetricSecurityKey SecurityKey()
+
+	private SymmetricSecurityKey SecurityKey()
 	{
-		var keyBytes = Encoding.ASCII.GetBytes(Config.TokenSecretKey);
+		var keyBytes = Encoding.ASCII.GetBytes(_settings.Api.TokenSecretKey);
 		return new SymmetricSecurityKey(keyBytes);
 	}
 }
+

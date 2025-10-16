@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading.RateLimiting;
 using Mahaam.Infra;
 using Mahaam.Infra.Monitoring;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,24 +19,28 @@ services.AddMvc().AddJsonOptions(options =>
 
 var configBuilder = new ConfigurationBuilder()
 	.SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location))
-	.AddJsonFile("config.json", optional: false, reloadOnChange: true);
+	.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 var config = configBuilder.Build();
-Config.Init(config);
 
+services.Configure<Settings>(config.GetSection("app"));
+services.AddSingleton(sp => sp.GetRequiredService<IOptions<Settings>>().Value);
+
+var settings = services.BuildServiceProvider().GetRequiredService<Settings>();
 
 builder.WebHost.UseKestrel(opts =>
 {
-	opts.Listen(IPAddress.Parse("0.0.0.0"), Config.HttpPort);
+	opts.Listen(IPAddress.Parse("0.0.0.0"), settings.Api.HttpPort);
 });
+
 
 Serilog.Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-	.WriteTo.File(Config.LogFile!,
+	.WriteTo.File(settings.Logging.File!,
 		rollingInterval: RollingInterval.Infinite,
 		rollOnFileSizeLimit: true,
-		fileSizeLimitBytes: Config.LogFileSizeLimit,
-		retainedFileCountLimit: Config.LogFileCountLimit,
-		outputTemplate: Config.LogFileOutputTemplate
+		fileSizeLimitBytes: settings.Logging.FileSizeLimit,
+		retainedFileCountLimit: settings.Logging.FileCountLimit,
+		outputTemplate: settings.Logging.OutputTemplate
 	)
 	.CreateLogger();
 
@@ -76,7 +81,7 @@ app.UsePathBase(new PathString("/mahaam-api"));
 app.UseMiddleware<AppMiddleware>();
 
 app.UseCors("AllowAll");
-if ("local".Equals(Config.EnvName))
+if ("local".Equals(settings.Api.EnvName))
 {
 	app.UseSwagger();
 	app.UseSwaggerUI();

@@ -1,7 +1,9 @@
+
+using Mahaam.Infra;
 using Twilio;
 using Twilio.Rest.Verify.V2.Service;
 
-namespace Mahaam.Infra;
+namespace Mahaam.Feat.Users;
 
 public interface IEmail
 {
@@ -9,14 +11,15 @@ public interface IEmail
 	string? SendOtp(string email);
 	string? VerifyOtp(string otp, string sid, string email);
 }
-public class Email(ILog log) : IEmail
+public class Email(ILog log, Settings settings) : IEmail
 {
 	private readonly ILog _log = log;
+	private readonly Settings _settings = settings;
 	public void Init()
 	{
 		try
 		{
-			TwilioClient.Init(Config.EmailAccountSid, Config.EmailAuthToken);
+			TwilioClient.Init(_settings.Email.AccountSid, _settings.Email.AuthToken);
 		}
 		catch (Exception e)
 		{
@@ -28,7 +31,7 @@ public class Email(ILog log) : IEmail
 	{
 		try
 		{
-			var verification = VerificationResource.Create(pathServiceSid: Config.EmailVerificationServiceSid, to: email, channel: "email");
+			var verification = VerificationResource.Create(pathServiceSid: _settings.Email.VerificationServiceSid, to: email, channel: "email");
 			return verification.Sid;
 		}
 		catch (Exception e)
@@ -42,7 +45,7 @@ public class Email(ILog log) : IEmail
 	{
 		try
 		{
-			var check = VerificationCheckResource.Create(to: email, code: otp, verificationSid: sid, pathServiceSid: Config.EmailVerificationServiceSid
+			var check = VerificationCheckResource.Create(to: email, code: otp, verificationSid: sid, pathServiceSid: _settings.Email.VerificationServiceSid
 			// ,verificationSid:sid was not there
 			);
 			return check.Status;
