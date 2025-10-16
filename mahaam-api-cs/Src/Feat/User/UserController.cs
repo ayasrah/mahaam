@@ -24,16 +24,16 @@ public interface IUserController
 
 [ApiController]
 [Route("users")]
-public class UserController : ControllerBase, IUserController
+public class UserController(IUserService userService) : ControllerBase, IUserController
 {
-
+	private readonly IUserService _userService = userService;
 	[HttpPost]
 	[EnableRateLimiting("PerUserRateLimit")]
 	[Route("send-me-otp")]
 	public IActionResult SendMeOtp([FromForm] string email)
 	{
 		Rule.ValidateEmail(email);
-		var verificationSid = App.UserService.SendMeOtp(email);
+		var verificationSid = _userService.SendMeOtp(email);
 		return Ok(verificationSid);
 
 	}
@@ -55,7 +55,7 @@ public class UserController : ControllerBase, IUserController
 		Rule.FailIf(!isPhysicalDevice, "Device should be real not simulator");
 		var device = new Device { Platform = platform, Fingerprint = deviceFingerprint, Info = deviceInfo };
 
-		var createdUser = App.UserService.Create(device);
+		var createdUser = _userService.Create(device);
 		return Ok(createdUser);
 	}
 
@@ -71,7 +71,7 @@ public class UserController : ControllerBase, IUserController
 		Rule.Required(sid, "sid");
 		Rule.Required(otp, "otp");
 
-		var verifiedUser = App.UserService.VerifyOtp(email, sid, otp);
+		var verifiedUser = _userService.VerifyOtp(email, sid, otp);
 
 		return Ok(verifiedUser);
 	}
@@ -80,7 +80,7 @@ public class UserController : ControllerBase, IUserController
 	[Route("refresh-token")]
 	public IActionResult RefreshToken()
 	{
-		var verifiedUser = App.UserService.RefreshToken();
+		var verifiedUser = _userService.RefreshToken();
 		return Ok(verifiedUser);
 	}
 
@@ -89,7 +89,7 @@ public class UserController : ControllerBase, IUserController
 	public IActionResult UpdateName([FromForm] string name)
 	{
 		Rule.Required(name, "name");
-		App.UserService.UpdateName(name);
+		_userService.UpdateName(name);
 		return Ok();
 	}
 
@@ -98,7 +98,7 @@ public class UserController : ControllerBase, IUserController
 	public IActionResult Logout([FromForm] Guid deviceId)
 	{
 		Rule.Required(deviceId, "deviceId");
-		App.UserService.Logout(deviceId);
+		_userService.Logout(deviceId);
 		return Ok();
 	}
 
@@ -108,7 +108,7 @@ public class UserController : ControllerBase, IUserController
 	{
 		Rule.Required(sid, "sid");
 		Rule.Required(otp, "otp");
-		App.UserService.Delete(sid, otp);
+		_userService.Delete(sid, otp);
 		return NoContent();
 	}
 
@@ -116,7 +116,7 @@ public class UserController : ControllerBase, IUserController
 	[Route("devices")]
 	public IActionResult GetDevices()
 	{
-		var devices = App.UserService.GetDevices();
+		var devices = _userService.GetDevices();
 		return Ok(devices);
 	}
 
@@ -124,7 +124,7 @@ public class UserController : ControllerBase, IUserController
 	[Route("suggested-emails")]
 	public IActionResult GetSuggestedEmails()
 	{
-		var suggestedEmails = App.UserService.GetSuggestedEmails();
+		var suggestedEmails = _userService.GetSuggestedEmails();
 		return Ok(suggestedEmails);
 	}
 
@@ -133,7 +133,7 @@ public class UserController : ControllerBase, IUserController
 	public IActionResult DeleteSuggestedEmail([FromForm] Guid suggestedEmailId)
 	{
 		Rule.Required(suggestedEmailId, "suggestedEmailId");
-		App.UserService.DeleteSuggestedEmail(suggestedEmailId);
+		_userService.DeleteSuggestedEmail(suggestedEmailId);
 		return NoContent();
 	}
 }

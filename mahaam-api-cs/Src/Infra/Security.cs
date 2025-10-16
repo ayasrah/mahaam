@@ -2,15 +2,24 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security;
 using System.Security.Claims;
 using System.Text;
+using Mahaam.Feat.Users;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Mahaam.Infra;
 
-public class Auth
+public interface IAuth
 {
-	public static (Guid, Guid, bool) ValidateAndExtractJwt(HttpContext context)
+	(Guid, Guid, bool) ValidateAndExtractJwt(HttpContext context);
+	string CreateToken(string userId, string deviceId);
+}
+
+public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo) : IAuth
+{
+	private readonly IDeviceRepo _deviceRepo = deviceRepo;
+	private readonly IUserRepo _userRepo = userRepo;
+	public (Guid, Guid, bool) ValidateAndExtractJwt(HttpContext context)
 	{
-		string? authorization = context.Request.Headers["Authorization"];
+		string? authorization = context.Request.Headers.Authorization;
 		if (string.IsNullOrEmpty(authorization))
 		{
 			throw new UnauthorizedException($"Authorization header not exists");
@@ -24,11 +33,11 @@ public class Auth
 		var userId = GetGuidClaim(token, "userId");
 		var deviceId = GetGuidClaim(token, "deviceId");
 
-		var device = App.DeviceRepo.GetOne(deviceId);
+		var device = _deviceRepo.GetOne(deviceId);
 		if ((device is null || userId != device.UserId) && !context.Request.Path.Equals("/user/logout"))
 			throw new UnauthorizedException($"Invalid user info");
 
-		var user = App.UserRepo.GetOne(userId);
+		var user = _userRepo.GetOne(userId);
 		var isLoggedIn = user is not null && user.Email is not null;
 		return (userId, deviceId, isLoggedIn);
 	}
@@ -45,7 +54,7 @@ public class Auth
 		return id;
 	}
 
-	public static string CreateToken(string userId, string deviceId)
+	public string CreateToken(string userId, string deviceId)
 	{
 		return JWT.Create(userId, deviceId);
 	}

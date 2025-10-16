@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mahaam.Infra.Monitoring;
@@ -10,23 +11,23 @@ public interface IAuditController
 
 [Route("audit")]
 [ApiController]
-public class AuditController : ControllerBase, IAuditController
+public class AuditController(ILog log) : ControllerBase, IAuditController
 {
-
+	private readonly ILog _log = log;
 	[HttpPost]
 	[Route("error")]
 	public IActionResult Error([FromForm] string error)
 	{
 
-		Log.Error(error);
-		return Created();
+		_log.Error(error);
+		return StatusCode((int)HttpStatusCode.Created);
 	}
 
 	[HttpPost]
 	[Route("info")]
 	public IActionResult Info([FromForm] string info)
 	{
-		Log.Info("mahaam-mb:" + info);
-		return Created();
+		_log.Info("mahaam-mb:" + info);
+		return StatusCode((int)HttpStatusCode.Created);
 	}
 }

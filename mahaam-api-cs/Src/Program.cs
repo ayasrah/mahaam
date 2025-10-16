@@ -2,6 +2,7 @@ using System.Net;
 using System.Reflection;
 using System.Threading.RateLimiting;
 using Mahaam.Infra;
+using Mahaam.Infra.Monitoring;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,6 +67,8 @@ services.AddRateLimiter(options =>
 	});
 });
 
+DI.Init(services);
+
 // Configure the HTTP request pipeline.
 var app = builder.Build();
 app.UsePathBase(new PathString("/mahaam-api"));
@@ -82,7 +85,6 @@ app.UseRouting();
 app.UseRateLimiter();
 app.MapControllers();
 
-Factory.Init();
 Starter.Init(app);
 
 // for dapper
@@ -90,4 +92,4 @@ Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 app.Run();
 // executed when app is stopped
-App.HealthService.ServerStopped();
+app.Services.GetService<IHealthService>()?.ServerStopped();

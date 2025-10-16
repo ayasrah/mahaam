@@ -8,9 +8,9 @@ public interface ITrafficRepo
 	void Create(Traffic traffic);
 }
 
-public class TrafficRepo : ITrafficRepo
+public class TrafficRepo(ILog log) : ITrafficRepo
 {
-
+	private readonly ILog _log = log;
 	public void Create(Traffic traffic)
 	{
 		Task.Run(() =>
@@ -24,7 +24,7 @@ public class TrafficRepo : ITrafficRepo
 			}
 			catch (Exception e)
 			{
-				Log.Error("error creating traffic record: " + e.ToString());
+				_log.Error("error creating traffic record: " + e.ToString());
 			}
 		});
 	}

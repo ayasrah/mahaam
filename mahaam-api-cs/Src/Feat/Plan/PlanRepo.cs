@@ -18,8 +18,9 @@ public interface IPlanRepo
 	int UpdateUserId(Guid oldUserId, Guid newUserId);
 }
 
-public class PlanRepo : IPlanRepo
+public class PlanRepo(ILog log) : IPlanRepo
 {
+	private readonly ILog _log = log;
 	public Guid Create(PlanIn plan)
 	{
 		var query = @"INSERT INTO plans (id, user_id, title, starts, ends, type, status, done_percent, sort_order, created_at)
@@ -95,7 +96,7 @@ public class PlanRepo : IPlanRepo
 	public void Delete(Guid id)
 	{
 		var count = DB.Delete("DELETE FROM plans WHERE id = @id", new { id });
-		if (count > 0) Log.Info($"Plan {id} deleted");
+		if (count > 0) _log.Info($"Plan {id} deleted");
 	}
 
 	public void UpdateDonePercent(Guid id)

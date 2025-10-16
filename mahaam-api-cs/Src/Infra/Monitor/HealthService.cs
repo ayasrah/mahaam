@@ -8,12 +8,13 @@ public interface IHealthService
 	void ServerStopped();
 }
 
-class HealthService : IHealthService
+public class HealthService(IHealthRepo healthRepo, ILog log) : IHealthService
 {
-
+	private readonly IHealthRepo _healthRepo = healthRepo;
+	private readonly ILog _log = log;
 	public void ServerStarted(Health health)
 	{
-		App.HealthRepo.Create(health);
+		_healthRepo.Create(health);
 	}
 
 	public void StartSendingPulses(CancellationToken cancellationToken = default)
@@ -24,12 +25,12 @@ class HealthService : IHealthService
 			{
 				try
 				{
-					App.HealthRepo.UpdatePulse(Cache.HealthId);
+					_healthRepo.UpdatePulse(Cache.HealthId);
 					Thread.Sleep(1000 * 60); // 1 minute
 				}
 				catch (Exception e)
 				{
-					Log.Error(e.ToString());
+					_log.Error(e.ToString());
 				}
 			}
 		}, cancellationToken);
@@ -41,13 +42,13 @@ class HealthService : IHealthService
 		{
 			try
 			{
-				App.HealthRepo.UpdateStopped(Cache.HealthId);
+				_healthRepo.UpdateStopped(Cache.HealthId);
 				var stopMsg = $"✓ {Config.ApiName}-v{Config.ApiVersion}/{Cache.NodeIP}-{Cache.NodeName} stopped with healthID={Cache.HealthId}";
-				Log.Info(stopMsg);
+				_log.Info(stopMsg);
 			}
 			catch (Exception e)
 			{
-				Log.Error(e.ToString());
+				_log.Error(e.ToString());
 			}
 		});
 		thread.Start();

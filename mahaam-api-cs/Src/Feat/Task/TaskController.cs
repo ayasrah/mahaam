@@ -17,15 +17,15 @@ public interface ITaskController
 
 [ApiController]
 [Route("plans/{planId}/tasks")]
-public class TaskController : ControllerBase, ITaskController
+public class TaskController(ITaskService taskService) : ControllerBase, ITaskController
 {
-
+	private readonly ITaskService _taskService = taskService;
 	[HttpPost]
 	public IActionResult Create(Guid planId, [FromForm] string title)
 	{
 		Rule.Required(planId, "planId");
 		Rule.Required(title, "title");
-		var id = App.TaskService.Create(planId, title);
+		var id = _taskService.Create(planId, title);
 		return Created($"/plans/{planId}/tasks/{id}", id);
 	}
 
@@ -35,7 +35,7 @@ public class TaskController : ControllerBase, ITaskController
 	{
 		Rule.Required(planId, "planId");
 		Rule.Required(id, "id");
-		App.TaskService.Delete(planId, id);
+		_taskService.Delete(planId, id);
 		return NoContent();
 	}
 
@@ -46,7 +46,7 @@ public class TaskController : ControllerBase, ITaskController
 		Rule.Required(planId, "planId");
 		Rule.Required(id, "id");
 		Rule.Required(done, "done");
-		App.TaskService.UpdateDone(planId, id, done);
+		_taskService.UpdateDone(planId, id, done);
 		return Ok();
 	}
 
@@ -56,7 +56,7 @@ public class TaskController : ControllerBase, ITaskController
 	{
 		Rule.Required(id, "id");
 		Rule.Required(title, "title");
-		App.TaskService.UpdateTitle(id, title);
+		_taskService.UpdateTitle(id, title);
 		return Ok();
 	}
 
@@ -67,7 +67,7 @@ public class TaskController : ControllerBase, ITaskController
 		Rule.Required(planId, "planId");
 		Rule.Required(oldOrder, "oldOrder");
 		Rule.Required(newOrder, "newOrder");
-		App.TaskService.ReOrder(planId, oldOrder, newOrder);
+		_taskService.ReOrder(planId, oldOrder, newOrder);
 		return Ok();
 	}
 
@@ -76,7 +76,7 @@ public class TaskController : ControllerBase, ITaskController
 	public IActionResult GetMany(Guid planId)
 	{
 		Rule.Required(planId, "planId");
-		var result = App.TaskService.GetList(planId);
+		var result = _taskService.GetList(planId);
 		return Ok(result);
 	}
 

@@ -6,10 +6,12 @@ using Mahaam.Infra.Monitoring;
 
 namespace Mahaam.Infra;
 
-public class AppMiddleware(RequestDelegate next)
+public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog log, IAuth authService)
 {
 	private readonly RequestDelegate _next = next;
-
+	private readonly ITrafficRepo _trafficRepo = trafficRepo;
+	private readonly ILog _log = log;
+	private readonly IAuth _authService = authService;
 	public async Task Invoke(HttpContext context)
 	{
 		var stopwatch = new Stopwatch();
@@ -50,7 +52,7 @@ public class AppMiddleware(RequestDelegate next)
 		}
 	}
 
-	private static void AuthenticateReq(HttpContext context)
+	private void AuthenticateReq(HttpContext context)
 	{
 		var path = context.Request.Path.Value ?? "";
 		var pathBase = context.Request.PathBase.Value;
@@ -63,7 +65,7 @@ public class AppMiddleware(RequestDelegate next)
 		string? appVersion = context.Request.Headers["x-app-version"];
 		if ((appStore == null || appVersion == null) && !path.StartsWith("/swagger"))
 		{
-			Log.Error($"Required headers not exists, appStore: {appStore}, appVersion: {appVersion}, path: {path}");
+			_log.Error($"Required headers not exists, appStore: {appStore}, appVersion: {appVersion}, path: {path}");
 			throw new UnauthorizedException("Required headers not exists");
 		}
 		Req.AppStore = appStore!;
@@ -78,14 +80,14 @@ public class AppMiddleware(RequestDelegate next)
 
 		if (!bypassAuthPaths.Exists(path.StartsWith))
 		{
-			(Guid userId, Guid deviceId, bool isLoggedIn) = Auth.ValidateAndExtractJwt(context);
+			(Guid userId, Guid deviceId, bool isLoggedIn) = _authService.ValidateAndExtractJwt(context);
 			Req.UserId = userId;
 			Req.DeviceId = deviceId;
 			Req.IsLoggedIn = isLoggedIn;
 		}
 	}
 
-	private static async Task<string> HandleException(HttpContext context, Exception e)
+	private async Task<string> HandleException(HttpContext context, Exception e)
 	{
 		var response = Newtonsoft.Json.JsonConvert.SerializeObject(e.Message);
 		var code = (int)HttpStatusCode.InternalServerError;
@@ -103,14 +105,14 @@ public class AppMiddleware(RequestDelegate next)
 			}
 		}
 
-		Log.Error(e.ToString());
+		_log.Error(e.ToString());
 		context.Response.StatusCode = code;
 		context.Response.ContentType = MediaTypeNames.Application.Json;
 		await context.Response.WriteAsync(response);
 		return response;
 	}
 
-	private static void CreateTraffic(HttpContext context, string? request, string? response, Stopwatch stopwatch)
+	private void CreateTraffic(HttpContext context, string? request, string? response, Stopwatch stopwatch)
 	{
 		var method = context.Request.Method;
 		var path = $"{context.Request.Path.Value}{context.Request.QueryString.ToString()}";
@@ -150,7 +152,7 @@ public class AppMiddleware(RequestDelegate next)
 			Response = string.IsNullOrEmpty(response) ? null : response,
 			HealthId = Cache.HealthId
 		};
-		App.TrafficRepo.Create(traffic);
+		_trafficRepo.Create(traffic);
 	}
 
 	private static async Task<string?> GetReqBody(HttpRequest request)

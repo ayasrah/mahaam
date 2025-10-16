@@ -21,8 +21,9 @@ public interface IPlanController
 
 [ApiController]
 [Route("plans")]
-public class PlanController : ControllerBase, IPlanController
+public class PlanController(IPlanService planService) : ControllerBase, IPlanController
 {
+	private readonly IPlanService _planService = planService;
 
 	[HttpPost]
 	[Consumes(MediaTypeNames.Application.Json)]
@@ -30,7 +31,7 @@ public class PlanController : ControllerBase, IPlanController
 	{
 		Rule.OneAtLeastRequired([plan.Title, plan.Starts, plan.Ends], "title or starts or ends is required");
 
-		var id = App.PlanService.Create(plan);
+		var id = _planService.Create(plan);
 		return Created($"/plans/{id}", id);
 	}
 
@@ -41,7 +42,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.Required(plan.Id, "Id");
 		Rule.OneAtLeastRequired([plan.Title, plan.Starts, plan.Ends], "title or starts or ends is required");
 
-		App.PlanService.Update(plan);
+		_planService.Update(plan);
 		return Ok();
 	}
 
@@ -50,7 +51,7 @@ public class PlanController : ControllerBase, IPlanController
 	public IActionResult Delete(Guid id)
 	{
 		Rule.Required(id, "id");
-		App.PlanService.Delete(id);
+		_planService.Delete(id);
 		return NoContent();
 	}
 
@@ -61,7 +62,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.Required(id, "id");
 		Rule.Required(email, "email");
 
-		App.PlanService.Share(id, email);
+		_planService.Share(id, email);
 		return Ok();
 	}
 
@@ -72,7 +73,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.Required(id, "id");
 		Rule.Required(email, "email");
 
-		App.PlanService.Unshare(id, email);
+		_planService.Unshare(id, email);
 		return Ok();
 	}
 
@@ -81,7 +82,7 @@ public class PlanController : ControllerBase, IPlanController
 	public IActionResult Leave(Guid id)
 	{
 		Rule.Required(id, "id");
-		App.PlanService.Leave(id);
+		_planService.Leave(id);
 		return Ok();
 	}
 
@@ -93,7 +94,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.Required(type, "type");
 		Rule.In(type, PlanType.All);
 
-		App.PlanService.UpdateType(id, type);
+		_planService.UpdateType(id, type);
 		return Ok();
 	}
 
@@ -105,7 +106,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.In(type, PlanType.All);
 		Rule.Required(oldOrder, "oldOrder");
 		Rule.Required(newOrder, "newOrder");
-		App.PlanService.ReOrder(type, oldOrder, newOrder);
+		_planService.ReOrder(type, oldOrder, newOrder);
 		return Ok();
 	}
 
@@ -115,7 +116,7 @@ public class PlanController : ControllerBase, IPlanController
 	{
 		Rule.Required(id, "id");
 
-		var plan = App.PlanService.GetOne(id);
+		var plan = _planService.GetOne(id);
 		return Ok(plan);
 	}
 
@@ -126,7 +127,7 @@ public class PlanController : ControllerBase, IPlanController
 		if (type is not null) Rule.In(type, PlanType.All);
 		else type = PlanType.Main;
 
-		var plans = App.PlanService.GetMany(type);
+		var plans = _planService.GetMany(type);
 		return Ok(plans);
 	}
 }

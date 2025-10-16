@@ -11,8 +11,8 @@ public class Starter
 {
 	public static void Init(WebApplication? app)
 	{
-		InitDB();
-		Email.Init();
+		InitDB(app);
+		app.Services.GetService<IEmail>()?.Init();
 
 		var health = new Health()
 		{
@@ -23,15 +23,15 @@ public class Starter
 			NodeName = Environment.MachineName,
 			EnvName = Config.EnvName
 		};
-		App.HealthService.ServerStarted(health);
+		app.Services.GetService<IHealthService>()?.ServerStarted(health);
 		Cache.Init(health);
 		var startMsg = $"✓ {Config.ApiName}-v{Config.ApiVersion}/{Cache.NodeIP}-{Cache.NodeName} started with healthID={Cache.HealthId}";
-		Log.Info(startMsg);
+		app.Services.GetService<ILog>()?.Info(startMsg);
 		Thread.Sleep(2000);
-		App.HealthService.StartSendingPulses();
+		app.Services.GetService<IHealthService>()?.StartSendingPulses();
 	}
 
-	private static void InitDB()
+	private static void InitDB(WebApplication app)
 	{
 		using (var connection = new NpgsqlConnection(Config.DbUrl))
 		{
@@ -42,7 +42,7 @@ public class Starter
 
 		Match match = Regex.Match(Config.DbUrl, pattern);
 		var host = match.Success ? match.Groups[1].Value : "";
-		Log.Info($"✓ Connected to DB on server {host}");
+		app.Services.GetService<ILog>()?.Info($"✓ Connected to DB on server {host}");
 	}
 
 	private static string GetNodeIP()

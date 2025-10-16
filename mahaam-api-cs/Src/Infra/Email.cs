@@ -3,9 +3,16 @@ using Twilio.Rest.Verify.V2.Service;
 
 namespace Mahaam.Infra;
 
-public class Email
+public interface IEmail
 {
-	public static void Init()
+	void Init();
+	string? SendOtp(string email);
+	string? VerifyOtp(string otp, string sid, string email);
+}
+public class Email(ILog log) : IEmail
+{
+	private readonly ILog _log = log;
+	public void Init()
 	{
 		try
 		{
@@ -13,11 +20,11 @@ public class Email
 		}
 		catch (Exception e)
 		{
-			Log.Error(e.ToString());
+			_log.Error(e.ToString());
 		}
 	}
 
-	public static string? SendOtp(string email)
+	public string? SendOtp(string email)
 	{
 		try
 		{
@@ -26,12 +33,12 @@ public class Email
 		}
 		catch (Exception e)
 		{
-			Log.Error(e.ToString());
+			_log.Error(e.ToString());
 		}
 		return null;
 	}
 
-	public static string VerifyOtp(string otp, string sid, string email)
+	public string VerifyOtp(string otp, string sid, string email)
 	{
 		try
 		{
@@ -42,7 +49,7 @@ public class Email
 		}
 		catch (Exception e)
 		{
-			Log.Error(e.ToString());
+			_log.Error(e.ToString());
 		}
 		return null;
 	}
