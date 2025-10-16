@@ -24,6 +24,6 @@ public class HealthController : ControllerBase, IHealthController
 			NodeName = Cache.NodeName,
 			EnvName = Cache.EnvName
 		};
-		return StatusCode(Http.Ok, result);
+		return Ok(result);
 	}
 }

@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Mahaam.Infra;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,24 +25,24 @@ public class PlanController : ControllerBase, IPlanController
 {
 
 	[HttpPost]
-	[Consumes(Http.json)]
+	[Consumes(MediaTypeNames.Application.Json)]
 	public IActionResult Create([FromBody] PlanIn plan)
 	{
 		Rule.OneAtLeastRequired([plan.Title, plan.Starts, plan.Ends], "title or starts or ends is required");
 
 		var id = App.PlanService.Create(plan);
-		return StatusCode(Http.Created, id);
+		return Created($"/plans/{id}", id);
 	}
 
 	[HttpPut]
-	[Consumes(Http.json)]
+	[Consumes(MediaTypeNames.Application.Json)]
 	public IActionResult Update([FromBody] PlanIn plan)
 	{
 		Rule.Required(plan.Id, "Id");
 		Rule.OneAtLeastRequired([plan.Title, plan.Starts, plan.Ends], "title or starts or ends is required");
 
 		App.PlanService.Update(plan);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpDelete]
@@ -50,7 +51,7 @@ public class PlanController : ControllerBase, IPlanController
 	{
 		Rule.Required(id, "id");
 		App.PlanService.Delete(id);
-		return StatusCode(Http.NoContent);
+		return NoContent();
 	}
 
 	[HttpPatch]
@@ -61,7 +62,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.Required(email, "email");
 
 		App.PlanService.Share(id, email);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpPatch]
@@ -72,7 +73,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.Required(email, "email");
 
 		App.PlanService.Unshare(id, email);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpPatch]
@@ -81,7 +82,7 @@ public class PlanController : ControllerBase, IPlanController
 	{
 		Rule.Required(id, "id");
 		App.PlanService.Leave(id);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpPatch]
@@ -93,7 +94,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.In(type, PlanType.All);
 
 		App.PlanService.UpdateType(id, type);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpPatch]
@@ -105,7 +106,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.Required(oldOrder, "oldOrder");
 		Rule.Required(newOrder, "newOrder");
 		App.PlanService.ReOrder(type, oldOrder, newOrder);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpGet]
@@ -115,7 +116,7 @@ public class PlanController : ControllerBase, IPlanController
 		Rule.Required(id, "id");
 
 		var plan = App.PlanService.GetOne(id);
-		return StatusCode(Http.Ok, plan);
+		return Ok(plan);
 	}
 
 	[HttpGet]
@@ -126,6 +127,6 @@ public class PlanController : ControllerBase, IPlanController
 		else type = PlanType.Main;
 
 		var plans = App.PlanService.GetMany(type);
-		return StatusCode(Http.Ok, plans);
+		return Ok(plans);
 	}
 }

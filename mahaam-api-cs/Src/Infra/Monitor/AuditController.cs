@@ -19,7 +19,7 @@ public class AuditController : ControllerBase, IAuditController
 	{
 
 		Log.Error(error);
-		return StatusCode(Http.Created);
+		return Created();
 	}
 
 	[HttpPost]
@@ -27,6 +27,6 @@ public class AuditController : ControllerBase, IAuditController
 	public IActionResult Info([FromForm] string info)
 	{
 		Log.Info("mahaam-mb:" + info);
-		return StatusCode(Http.Created);
+		return Created();
 	}
 }

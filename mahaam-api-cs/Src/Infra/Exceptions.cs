@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Mahaam.Infra;
 
 public abstract class AppException : Exception
@@ -8,22 +10,22 @@ public abstract class AppException : Exception
 	public AppException(string message, int httpCode, string? key = null) : base(message) { Key = key; HttpCode = httpCode; }
 }
 
-public class UnauthorizedException(string message) : AppException(message, Http.UnAuthorized)
+public class UnauthorizedException(string message) : AppException(message, (int)HttpStatusCode.Unauthorized)
 {
 }
 
-public class ForbiddenException(string message) : AppException(message, Http.Forbidden)
+public class ForbiddenException(string message) : AppException(message, (int)HttpStatusCode.Forbidden)
 {
 }
 
-public class LogicException(string message, string? key = null) : AppException(message, Http.Conflict, key)
+public class LogicException(string message, string? key = null) : AppException(message, (int)HttpStatusCode.Conflict, key)
 {
 }
 
-public class NotFoundException(string message) : AppException(message, Http.NotFound)
+public class NotFoundException(string message) : AppException(message, (int)HttpStatusCode.NotFound)
 {
 }
 
-public class InputException(string message) : AppException(message, Http.BadRequest)
+public class InputException(string message) : AppException(message, (int)HttpStatusCode.BadRequest)
 {
 }

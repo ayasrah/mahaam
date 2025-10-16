@@ -90,7 +90,7 @@ public class UserController : ControllerBase, IUserController
 	{
 		Rule.Required(name, "name");
 		App.UserService.UpdateName(name);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpPost]

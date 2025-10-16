@@ -1,3 +1,5 @@
+
+using System.Net;
 using Mahaam.Infra;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +26,7 @@ public class TaskController : ControllerBase, ITaskController
 		Rule.Required(planId, "planId");
 		Rule.Required(title, "title");
 		var id = App.TaskService.Create(planId, title);
-		return StatusCode(Http.Created, id);
+		return Created($"/plans/{planId}/tasks/{id}", id);
 	}
 
 	[HttpDelete]
@@ -34,7 +36,7 @@ public class TaskController : ControllerBase, ITaskController
 		Rule.Required(planId, "planId");
 		Rule.Required(id, "id");
 		App.TaskService.Delete(planId, id);
-		return StatusCode(Http.NoContent);
+		return NoContent();
 	}
 
 	[HttpPatch]
@@ -45,7 +47,7 @@ public class TaskController : ControllerBase, ITaskController
 		Rule.Required(id, "id");
 		Rule.Required(done, "done");
 		App.TaskService.UpdateDone(planId, id, done);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpPatch]
@@ -55,7 +57,7 @@ public class TaskController : ControllerBase, ITaskController
 		Rule.Required(id, "id");
 		Rule.Required(title, "title");
 		App.TaskService.UpdateTitle(id, title);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpPatch]
@@ -66,7 +68,7 @@ public class TaskController : ControllerBase, ITaskController
 		Rule.Required(oldOrder, "oldOrder");
 		Rule.Required(newOrder, "newOrder");
 		App.TaskService.ReOrder(planId, oldOrder, newOrder);
-		return StatusCode(Http.Ok);
+		return Ok();
 	}
 
 	[HttpGet]
@@ -75,7 +77,7 @@ public class TaskController : ControllerBase, ITaskController
 	{
 		Rule.Required(planId, "planId");
 		var result = App.TaskService.GetList(planId);
-		return StatusCode(Http.Ok, result);
+		return Ok(result);
 	}
 
 }

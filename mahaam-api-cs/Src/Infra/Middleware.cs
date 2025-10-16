@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.Net;
 using System.Text;
+using System.Net.Mime;
 using Mahaam.Infra.Monitoring;
 
 namespace Mahaam.Infra;
@@ -85,8 +87,8 @@ public class AppMiddleware(RequestDelegate next)
 
 	private static async Task<string> HandleException(HttpContext context, Exception e)
 	{
-		var response = Json.Serialize(e.Message);
-		var code = Http.ServerError;
+		var response = Newtonsoft.Json.JsonConvert.SerializeObject(e.Message);
+		var code = (int)HttpStatusCode.InternalServerError;
 
 
 		if (e is AppException)
@@ -97,13 +99,13 @@ public class AppMiddleware(RequestDelegate next)
 			if (!string.IsNullOrEmpty(key))
 			{
 				var res = new { key, error = e.Message };
-				response = Json.Serialize(res);
+				response = Newtonsoft.Json.JsonConvert.SerializeObject(res);
 			}
 		}
 
 		Log.Error(e.ToString());
 		context.Response.StatusCode = code;
-		context.Response.ContentType = Http.json;
+		context.Response.ContentType = MediaTypeNames.Application.Json;
 		await context.Response.WriteAsync(response);
 		return response;
 	}
@@ -143,7 +145,7 @@ public class AppMiddleware(RequestDelegate next)
 			Path = path,
 			Code = code,
 			Elapsed = elapsed,
-			Headers = Json.Serialize(headers),
+			Headers = Newtonsoft.Json.JsonConvert.SerializeObject(headers),
 			Request = request,
 			Response = string.IsNullOrEmpty(response) ? null : response,
 			HealthId = Cache.HealthId
