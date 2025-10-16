@@ -8,8 +8,9 @@ public interface ILogRepo
 	void Create(string type, string message, Guid? trafficId);
 }
 
-public class LogRepo : ILogRepo
+public class LogRepo(IDB db) : ILogRepo
 {
+	private readonly IDB _db = db;
 	public void Create(string type, string message, Guid? trafficId)
 	{
 		var err = new
@@ -27,7 +28,7 @@ public class LogRepo : ILogRepo
 				try
 				{
 					using var scope = new TransactionScope(TransactionScopeOption.Suppress);
-					DB.Insert(query, err);
+					_db.Insert(query, err);
 				}
 				catch (Exception ex)
 				{

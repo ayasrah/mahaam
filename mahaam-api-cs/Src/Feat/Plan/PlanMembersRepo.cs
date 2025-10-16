@@ -13,20 +13,20 @@ public interface IPlanMembersRepo
 	public int GetUsersCount(Guid planId);
 }
 
-public class PlanMembersRepo : IPlanMembersRepo
+public class PlanMembersRepo(IDB db) : IPlanMembersRepo
 {
-
+	private readonly IDB _db = db;
 	public void Create(Guid planId, Guid userId)
 	{
 		var query = @"INSERT INTO plan_members(plan_id, user_id, created_at) 
 			VALUES(@planId, @userId, current_timestamp)";
-		DB.Insert(query, new { planId, userId });
+		_db.Insert(query, new { planId, userId });
 	}
 
 	public int Delete(Guid planId, Guid userId)
 	{
 		var query = @"DELETE FROM plan_members WHERE plan_id = @planId AND user_id = @userId";
-		return DB.Delete(query, new { planId, userId });
+		return _db.Delete(query, new { planId, userId });
 	}
 
 
@@ -44,7 +44,7 @@ public class PlanMembersRepo : IPlanMembersRepo
 			WHERE cm.user_id = @userId
 			ORDER BY c.created_at DESC";
 
-		return DB.SelectMany<Plan, User, Plan>(query, (plan, user) =>
+		return _db.SelectMany<Plan, User, Plan>(query, (plan, user) =>
 		{
 			plan.User = user;
 			plan.IsShared = true;
@@ -62,7 +62,7 @@ public class PlanMembersRepo : IPlanMembersRepo
 			LEFT JOIN users u ON cm.user_id = u.id
 			WHERE cm.plan_id = @planId
 			ORDER BY u.created_at DESC";
-		return DB.SelectMany<User>(query, new { planId });
+		return _db.SelectMany<User>(query, new { planId });
 	}
 
 	/// <summary>
@@ -73,7 +73,7 @@ public class PlanMembersRepo : IPlanMembersRepo
 		var query = @"SELECT COUNT(1) FROM plan_members cm
 			LEFT JOIN plans c ON cm.plan_id = c.id
 			WHERE c.user_id = @userId";
-		return DB.SelectOne<int>(query, new { userId });
+		return _db.SelectOne<int>(query, new { userId });
 	}
 
 	/// <summary>
@@ -82,6 +82,6 @@ public class PlanMembersRepo : IPlanMembersRepo
 	public int GetUsersCount(Guid planId)
 	{
 		var query = "SELECT COUNT(1) FROM plan_members WHERE plan_id = @planId";
-		return DB.SelectOne<int>(query, new { planId });
+		return _db.SelectOne<int>(query, new { planId });
 	}
 }

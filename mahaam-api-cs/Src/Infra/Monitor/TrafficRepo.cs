@@ -8,8 +8,9 @@ public interface ITrafficRepo
 	void Create(Traffic traffic);
 }
 
-public class TrafficRepo(ILog log) : ITrafficRepo
+public class TrafficRepo(IDB db, ILog log) : ITrafficRepo
 {
+	private readonly IDB _db = db;
 	private readonly ILog _log = log;
 	public void Create(Traffic traffic)
 	{
@@ -20,7 +21,7 @@ public class TrafficRepo(ILog log) : ITrafficRepo
 				var query = @"INSERT INTO x_traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at)
 					VALUES(@Id, @HealthId, @Method, @Path, @Code, @Elapsed, @Headers, @Request, @Response, current_timestamp)";
 				using var scope = new TransactionScope(TransactionScopeOption.Suppress);
-				DB.Insert(query, traffic);
+				_db.Insert(query, traffic);
 			}
 			catch (Exception e)
 			{

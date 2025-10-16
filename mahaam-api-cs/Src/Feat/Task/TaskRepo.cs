@@ -16,20 +16,20 @@ public interface ITaskRepo
 	int GetCount(Guid planId);
 }
 
-public class TaskRepo : ITaskRepo
+public class TaskRepo(IDB db) : ITaskRepo
 {
-
+	private readonly IDB _db = db;
 	public List<Task> GetAll(Guid planId)
 	{
 		var query = @"SELECT id, plan_id, title, done, sort_order, created_at, updated_at 
 			FROM tasks WHERE plan_id = @planId order by sort_order desc;";
-		return DB.SelectMany<Task>(query, new { planId });
+		return _db.SelectMany<Task>(query, new { planId });
 	}
 
 	public Task GetOne(Guid id)
 	{
 		var query = @"SELECT id, plan_id, title, done, sort_order, created_at, updated_at FROM tasks WHERE id = @id";
-		return DB.SelectOne<Task>(query, new { id });
+		return _db.SelectOne<Task>(query, new { id });
 	}
 
 	public Guid Create(Guid planId, string title)
@@ -38,27 +38,27 @@ public class TaskRepo : ITaskRepo
 			VALUES (@id, @planId, @title, @done, (SELECT COUNT(1) FROM tasks WHERE plan_id = @planId), current_timestamp)";
 
 		var id = Guid.NewGuid();
-		DB.Insert(query, new { id, planId, title, done = false });
+		_db.Insert(query, new { id, planId, title, done = false });
 		return id;
 	}
 
 	public void DeleteOne(Guid id)
 	{
 		var query = "DELETE FROM tasks WHERE id = @id";
-		var deletedRows = DB.Delete(query, new { id });
+		var deletedRows = _db.Delete(query, new { id });
 		if (deletedRows == 0) throw new NotFoundException($"task id={id} not found");
 	}
 
 	public void DeleteAll(Guid planId)
 	{
 		var query = "DELETE FROM tasks WHERE plan_id = @planId";
-		DB.Delete(query, new { planId });
+		_db.Delete(query, new { planId });
 	}
 
 	public void UpdateDone(Guid id, bool done)
 	{
 		var query = "UPDATE tasks SET done = @done, updated_at = current_timestamp WHERE id = @id";
-		var updatedRows = DB.Update(query, new { id, done });
+		var updatedRows = _db.Update(query, new { id, done });
 		if (updatedRows == 0) throw new NotFoundException($"task id={id} not found");
 
 	}
@@ -66,7 +66,7 @@ public class TaskRepo : ITaskRepo
 	public void UpdateTitle(Guid id, string title)
 	{
 		var query = "UPDATE tasks SET title = @title, updated_at = current_timestamp WHERE id = @id";
-		var updatedRows = DB.Update(query, new { id, title });
+		var updatedRows = _db.Update(query, new { id, title });
 		if (updatedRows == 0) throw new NotFoundException($"task id={id} not found");
 
 	}
@@ -75,7 +75,7 @@ public class TaskRepo : ITaskRepo
 	{
 		var query = @"UPDATE tasks SET sort_order = sort_order - 1
 			WHERE plan_id = @planId AND sort_order > (SELECT sort_order FROM tasks WHERE id =@id)";
-		DB.Update(query, new { planId, id });
+		_db.Update(query, new { planId, id });
 	}
 
 	public void UpdateOrder(Guid planId, int oldOrder, int newOrder)
@@ -89,12 +89,12 @@ public class TaskRepo : ITaskRepo
 					ELSE sort_order
 				END
 			WHERE plan_id = @planId;";
-		DB.Update(query, new { planId, oldOrder, newOrder });
+		_db.Update(query, new { planId, oldOrder, newOrder });
 	}
 
 	public int GetCount(Guid planId)
 	{
 		var query = "SELECT COUNT(1) FROM tasks WHERE plan_id = @planId";
-		return DB.SelectOne<int>(query, new { planId });
+		return _db.SelectOne<int>(query, new { planId });
 	}
 }

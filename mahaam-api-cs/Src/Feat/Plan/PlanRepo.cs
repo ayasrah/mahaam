@@ -18,8 +18,9 @@ public interface IPlanRepo
 	int UpdateUserId(Guid oldUserId, Guid newUserId);
 }
 
-public class PlanRepo(ILog log) : IPlanRepo
+public class PlanRepo(IDB db, ILog log) : IPlanRepo
 {
+	private readonly IDB _db = db;
 	private readonly ILog _log = log;
 	public Guid Create(PlanIn plan)
 	{
@@ -27,7 +28,7 @@ public class PlanRepo(ILog log) : IPlanRepo
 			VALUES (@Id, @UserId, @Title, @Starts, @Ends, @type, @status, '0/0', 
 			(SELECT COUNT(1) FROM plans WHERE user_id = @UserId AND type = @type), current_timestamp)";
 		var id = Guid.NewGuid();
-		DB.Insert(query, new
+		_db.Insert(query, new
 		{
 			id,
 			plan.Title,
@@ -43,7 +44,7 @@ public class PlanRepo(ILog log) : IPlanRepo
 	public void Update(PlanIn plan)
 	{
 		var query = "UPDATE plans SET title = @title, starts = @starts, ends = @ends, updated_at = current_timestamp WHERE id = @id";
-		DB.Update(query, new { id = plan.Id, title = plan.Title, starts = plan.Starts, ends = plan.Ends });
+		_db.Update(query, new { id = plan.Id, title = plan.Title, starts = plan.Starts, ends = plan.Ends });
 	}
 
 	public Plan GetOne(Guid id)
@@ -56,7 +57,7 @@ public class PlanRepo(ILog log) : IPlanRepo
 			LEFT JOIN users u ON c.user_id = u.id
 			WHERE c.id = @id";
 
-		return DB.SelectOne<Plan, User, Plan>(
+		return _db.SelectOne<Plan, User, Plan>(
 			query,
 			(plan, user) =>
 			{
@@ -82,7 +83,7 @@ public class PlanRepo(ILog log) : IPlanRepo
 			WHERE c.user_id = @userId AND c.type = @type
 			ORDER BY c.sort_order DESC;";
 
-		return DB.SelectMany<Plan, User, Plan>(
+		return _db.SelectMany<Plan, User, Plan>(
 			query,
 			(plan, user) =>
 			{
@@ -95,20 +96,20 @@ public class PlanRepo(ILog log) : IPlanRepo
 
 	public void Delete(Guid id)
 	{
-		var count = DB.Delete("DELETE FROM plans WHERE id = @id", new { id });
+		var count = _db.Delete("DELETE FROM plans WHERE id = @id", new { id });
 		if (count > 0) _log.Info($"Plan {id} deleted");
 	}
 
 	public void UpdateDonePercent(Guid id)
 	{
 		var query = "SELECT * FROM tasks WHERE plan_id = @id";
-		var tasks = DB.SelectMany<Tasks.Task>(query, new { id });
+		var tasks = _db.SelectMany<Tasks.Task>(query, new { id });
 
 		var done = tasks.Where(task => task.Done).Count();
 		var notDone = tasks.Count;
 		var donePercent = $"{done}/{notDone}";
 		var updatequery = "UPDATE plans SET done_percent = @donePercent WHERE id = @id";
-		DB.Update(updatequery, new { donePercent, id });
+		_db.Update(updatequery, new { donePercent, id });
 	}
 
 	/// <summary>
@@ -122,7 +123,7 @@ public class PlanRepo(ILog log) : IPlanRepo
 			UPDATE plans SET sort_order = sort_order - 1 
 			WHERE user_id = @userId AND type = (SELECT type FROM Plans WHERE id =@id) 
 				AND sort_order > (SELECT sort_order FROM plans WHERE id =@id)";
-		DB.Update(query, new { userId, id });
+		_db.Update(query, new { userId, id });
 	}
 
 	public void UpdateOrder(Guid userId, string type, int oldOrder, int newOrder)
@@ -138,7 +139,7 @@ public class PlanRepo(ILog log) : IPlanRepo
 			WHERE 
 				user_id = @userId AND 
 				type = @type";
-		var updated = DB.Update(query, new { userId, type, oldOrder, newOrder });
+		var updated = _db.Update(query, new { userId, type, oldOrder, newOrder });
 		Console.WriteLine(updated);
 	}
 
@@ -147,13 +148,13 @@ public class PlanRepo(ILog log) : IPlanRepo
 		var query = @"UPDATE plans SET type = @type, 
 			sort_order = (SELECT COUNT(1) FROM plans WHERE user_id = @userId AND type = @type), 
 			updated_at = current_timestamp WHERE id = @id";
-		DB.Update(query, new { userId, id, type });
+		_db.Update(query, new { userId, id, type });
 	}
 
 	public int GetCount(Guid userId, string type)
 	{
 		var queryCount = "SELECT COUNT(*) FROM plans WHERE user_id = @userId and type = @type";
-		var count = DB.SelectOne<int>(queryCount, new { userId, type });
+		var count = _db.SelectOne<int>(queryCount, new { userId, type });
 		return count;
 	}
 
@@ -164,6 +165,6 @@ public class PlanRepo(ILog log) : IPlanRepo
 			sort_order = (sort_order + (Select count(1) from plans where user_id=@newUserId)),
 			updated_at = current_timestamp 
 			WHERE user_id = @oldUserId";
-		return DB.Update(query, new { oldUserId, newUserId });
+		return _db.Update(query, new { oldUserId, newUserId });
 	}
 }

@@ -12,6 +12,7 @@ public static class DI
 		services.AddSingleton<IAuth, Auth>();
 		services.AddSingleton<ILog, Log>();
 		services.AddSingleton<IEmail, Email>();
+		services.AddSingleton<IDB, DB>();
 		services.AddSingleton<IPlanRepo, PlanRepo>();
 		services.AddSingleton<IPlanMembersRepo, PlanMembersRepo>();
 		services.AddSingleton<ITaskRepo, TaskRepo>();
