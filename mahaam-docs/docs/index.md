@@ -2,27 +2,21 @@
 
 ### Overview
 
-Mahaam is an open-sourced, production-ready ToDo app implemented in C#, Java, Go, TypeScript, and Python.
+Mahaam is an open-source, production-ready ToDo app. This documentation explores the following **backend service concepts** through the Mahaam.
+
+- **`Service Setup`**: App creation.
+- **`Service Design`**: Functions, models, and design.
+- **`Service Module`**: Controllers, Services and Repositories.
+- **`Service Infra`**: App utilities.
+- **`Service Testing`**: Integration tests.
 
 ### Purpose
 
-I’m Abdullah Ayasrah, a software engineer. I started Mahaam as a proof-of-concept for different technologies and architectures. I wanted it to go deeper than the typical shallow ToDo apps, that's why I added real-world functionalites and pushed it to production to complete the cycle.
+Mahaam is a proof of concept for different technologies and architectures. Unlike typical shallow ToDo apps, it goes deeper by implementing real-world functionalities and being deployed to production.
 
 ### Source Code
 
 Currently, Mahaam is implemented in five languages: **`C#, Java, Go, TypeScript, and Python`** with exact functionality, all expose exact API endpoints and all connected to same database schema.
-
-In the code, I tried to give the value to the business model and maintainability rather than a language or framework, and to address challenges like spaghetti code and overengineering.
-
-### Mahaam.dev
-
-This site spotlights the following backend service concepts through Mahaam.
-
-1. **Service Setup**: App creation.
-2. **Service Design**: Functionality, data model, system design, and maintainability principles.
-3. **Service Module**: Module parts: Controller, Service and Repo.
-4. **Service Infra**: Shared app utilities.
-5. **Service Testing**: Integration tests.
 
 ### Philosophy
 
