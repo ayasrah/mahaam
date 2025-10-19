@@ -120,7 +120,7 @@ public class PlanController : ControllerBase, IPlanController
     public IActionResult GetOne(Guid planId)
     {
         Rule.Required(planId, "planId");
-        var plan = App.PlanService.GetOne(planId);
+        var plan = _planService.GetOne(planId);
         return StatusCode(Http.Ok, plan);
     }
 }

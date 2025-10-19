@@ -24,7 +24,7 @@ Mahaam defined 5 type of exceptions:
 // In TaskService.cs
 public Guid Create(Guid planId, string title)
 {
-	var count = App.TaskRepo.GetCount(planId);
+	var count = _taskRepo.GetCount(planId);
 	if (count >= 100) throw new LogicException("max_is_100", "Max is 100");
 
 	//... rest of create logic
@@ -109,7 +109,7 @@ This approach enhances code readability and maintainability by:
 	{
 		Rule.Required(id, "id");
 		Rule.Required(email, "email");
-		App.PlanService.Unshare(id, email);
+		_planService.Unshare(id, email);
 		return StatusCode(Http.Ok);
 	}
 ```

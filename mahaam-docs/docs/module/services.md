@@ -122,11 +122,11 @@ public class PlanService : IPlanService
     public Guid Create(PlanIn plan)
     {
         var userId = Request<Guid>.Get("userId");
-        var count = App.PlanRepo.GetCount(userId, "Main");
+        var count = _planRepo.GetCount(userId, "Main");
         if (count >= 100) throw new LogicException("max_is_100", "Max is 100");
 
         using var scope = new TransactionScope();
-        var id = App.PlanRepo.Create(plan);
+        var id = _planRepo.Create(plan);
         scope.Complete();
         return id;
     }

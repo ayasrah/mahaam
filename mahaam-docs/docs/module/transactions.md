@@ -28,8 +28,8 @@ Mahaam implements transaction management in the service layer across all languag
 public Guid CreateTask(Guid planId, string title)
 {
 	using var scope = new TransactionScope();
-	var id = App.TaskRepo.Create(planId, title);
-	App.PlanRepo.UpdateDonePercent(planId);
+	var id = _taskRepo.Create(planId, title);
+	_planRepo.UpdateDonePercent(planId);
 	scope.Complete();
 	return id;
 }
