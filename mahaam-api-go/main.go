@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -10,23 +11,120 @@ import (
 	"syscall"
 	"time"
 
-	"mahaam-api/feat/handler"
-	"mahaam-api/feat/models"
-	"mahaam-api/feat/repo"
-	"mahaam-api/feat/service"
-	"mahaam-api/infra/cache"
-	"mahaam-api/infra/configs"
-	"mahaam-api/infra/dbs"
-	"mahaam-api/infra/emails"
-	logs "mahaam-api/infra/log"
-	"mahaam-api/infra/middleware"
-	"mahaam-api/infra/security"
+	"mahaam-api/app/handler"
+	"mahaam-api/app/models"
+	"mahaam-api/app/repo"
+	"mahaam-api/app/service"
+	"mahaam-api/utils/conf"
+	emails "mahaam-api/utils/email"
+	logs "mahaam-api/utils/log"
+	"mahaam-api/utils/middleware"
+	token "mahaam-api/utils/token"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+type repos struct {
+	plan            repo.PlanRepo
+	planMembers     repo.PlanMembersRepo
+	user            repo.UserRepo
+	suggestedEmails repo.SuggestedEmailRepo
+	task            repo.TaskRepo
+	device          repo.DeviceRepo
+	log             repo.LogRepo
+	traffic         repo.TrafficRepo
+	health          repo.HealthRepo
+}
+
+type services struct {
+	health service.HealthService
+	plan   service.PlanService
+	task   service.TaskService
+	user   service.UserService
+}
+
+type handlers struct {
+	user   handler.UserHandler
+	plan   handler.PlanHandler
+	audit  handler.AuditHandler
+	health handler.HealthHandler
+	task   handler.TaskHandler
+}
+
+func loadConfig() *conf.Conf {
+	return conf.NewConf("config.json")
+}
+
+func openDB(dbURL string) *repo.AppDB {
+	db, err := repo.NewAppDB(dbURL)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+		os.Exit(1)
+	}
+	return db
+}
+
+func initRepos(db *repo.AppDB) repos {
+	return repos{
+		plan:            repo.NewPlanRepo(db),
+		planMembers:     repo.NewPlanMembersRepo(db),
+		user:            repo.NewUserRepo(db),
+		suggestedEmails: repo.NewSuggestedEmailRepo(db),
+		task:            repo.NewTaskRepo(db),
+		device:          repo.NewDeviceRepo(db),
+		log:             repo.NewLogRepo(db),
+		traffic:         repo.NewTrafficRepo(db),
+		health:          repo.NewHealthRepo(db),
+	}
+}
+
+func initUtilities(cfg *conf.Conf, logRepo repo.LogRepo, deviceRepo repo.DeviceRepo, userRepo repo.UserRepo) (logs.Logger, token.TokenService, emails.EmailService) {
+	logger := logs.NewLogger(cfg, logRepo.Create)
+	tokenService := token.NewTokenService(deviceRepo, userRepo, cfg)
+	emailService := emails.NewEmailService(cfg, logger)
+	return logger, tokenService, emailService
+}
+
+func initServices(cfg *conf.Conf, logger logs.Logger, db *repo.AppDB, r repos, tokenService token.TokenService, emailService emails.EmailService) services {
+	return services{
+		health: service.NewHealthService(r.health, cfg, logger),
+		plan:   service.NewPlanService(db, r.plan, r.planMembers, r.user, r.suggestedEmails),
+		task:   service.NewTaskService(db, r.task, r.plan),
+		user:   service.NewUserService(db, r.user, r.device, r.plan, r.suggestedEmails, tokenService, emailService, cfg, logger),
+	}
+}
+
+func initHandlers(svcs services, logger logs.Logger, cfg *conf.Conf) handlers {
+	return handlers{
+		user:   handler.NewUserHandler(svcs.user, logger),
+		plan:   handler.NewPlanHandler(svcs.plan, logger),
+		audit:  handler.NewAuditHandler(logger),
+		health: handler.NewHealthHandler(cfg),
+		task:   handler.NewTaskHandler(svcs.task),
+	}
+}
+
+func buildRouter(cfg *conf.Conf, r repos, logger logs.Logger, tokenService token.TokenService, h handlers) *gin.Engine {
+	router := gin.Default()
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	authed := router.Group("/mahaam-api")
+	authed.Use(middleware.TrafficMiddleware(r.traffic, cfg, logger))
+	authed.Use(middleware.RecoveryMiddleware(logger))
+	authed.Use(middleware.AuthMiddleware(&tokenService, logger))
+
+	// Register routes
+	handler.RegisterUserHandler(authed, h.user)
+	handler.RegisterPlanHandler(authed, h.plan)
+	handler.RegisterTaskHandler(authed, h.task)
+	handler.RegisterAuditHandler(authed, h.audit)
+	handler.RegisterHealthHandler(authed, h.health)
+
+	return router
+}
 
 func getNodeIP() string {
 	conn, err := net.Dial("udp", "8.8.8.8:10002")
@@ -39,124 +137,84 @@ func getNodeIP() string {
 	return localAddr.IP.String()
 }
 
-func stringPtr(s string) *string {
-	return &s
-}
-
-func main() {
-	configs.Init()
-	emails.Init()
-	db, err := dbs.Init()
-	if err != nil {
-		logs.Error(uuid.Nil, "Failed to connect to database: %v", err)
-	}
-	defer db.Close()
-
-	// Init repos
-	planRepo := repo.NewPlanRepo()
-	planMembersRepo := repo.NewPlanMembersRepo()
-	userRepo := repo.NewUserRepo()
-	suggestedEmailsRepo := repo.NewSuggestedEmailRepo()
-	taskRepo := repo.NewTaskRepo()
-	deviceRepo := repo.NewDeviceRepo()
-	logRepo := repo.NewLogRepo()
-	trafficRepo := repo.NewTrafficRepo()
-	healthRepo := repo.NewHealthRepo()
-
-	logs.Init(logRepo.Create)
-
-	// infraa
-	authService := security.NewAuthService(deviceRepo, userRepo)
-
-	// Init services
-	healthService := service.NewHealthService(healthRepo)
-	planService := service.NewPlanService(db, planRepo, planMembersRepo, userRepo, suggestedEmailsRepo)
-	taskService := service.NewTaskService(taskRepo, planRepo)
-	userService := service.NewUserService(db,
-		userRepo,
-		deviceRepo,
-		planRepo,
-		suggestedEmailsRepo,
-		authService,
-	)
-
-	// Init handlers
-	userHandler := handler.NewUserHandler(userService)
-	planHandler := handler.NewPlanHandler(planService)
-	auditHandler := handler.NewAuditHandler(logRepo)
-	healthHandler := handler.NewHealthHandler()
-	taskHandler := handler.NewTaskHandler(taskService)
-
-	router := gin.Default()
-
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	authed := router.Group("/mahaam-api")
-	authed.Use(middleware.TrafficMiddleware(trafficRepo))
-	authed.Use(middleware.RecoveryMiddleware())
-	authed.Use(middleware.AuthMiddleware(&authService, logRepo))
-
-	// Register routes
-	handler.RegisterUserHandler(authed, userHandler)
-	handler.RegisterPlanHandler(authed, planHandler)
-	handler.RegisterTaskHandler(authed, taskHandler)
-	handler.RegisterAuditHandler(authed, auditHandler)
-	handler.RegisterHealthHandler(authed, healthHandler)
-
-	// Initialize health monitoring
+func initHealthState(cfg *conf.Conf, healthSvc service.HealthService, logger logs.Logger) {
 	nodeName, _ := os.Hostname()
 	health := &models.Health{
 		ID:         uuid.New(),
-		ApiName:    configs.ApiName,
-		ApiVersion: configs.ApiVersion,
+		ApiName:    cfg.ApiName,
+		ApiVersion: cfg.ApiVersion,
 		NodeIP:     getNodeIP(),
 		NodeName:   nodeName,
-		EnvName:    configs.EnvName,
+		EnvName:    cfg.EnvName,
 	}
-	fmt.Println("health", health)
-	healthService.ServerStarted(health)
-	cache.Init(health)
 
-	startMsg := fmt.Sprintf("✓ %s-v%s/%s-%s started with healthID=%s", cache.ApiName, cache.ApiVersion, cache.NodeIP, cache.NodeName, cache.HealthID.String())
-	logs.Info(uuid.Nil, startMsg)
+	healthSvc.ServerStarted(health)
+	conf.NewEnvironment(health)
+
+	startMsg := fmt.Sprintf("✓ %s-v%s/%s-%s started with healthID=%s", cfg.ApiName, cfg.ApiVersion, conf.Env().NodeIP, conf.Env().NodeName, conf.Env().HealthID.String())
+	logger.Info(uuid.Nil, startMsg)
 	time.Sleep(2 * time.Second)
+}
 
-	// Start the server
-	port := fmt.Sprintf(":%v", configs.HTTPPort)
-	fmt.Printf("Server running on port %s\n", port)
+func startHTTPServer(router *gin.Engine, port int) *http.Server {
+	addr := fmt.Sprintf(":%v", port)
+	fmt.Printf("Server running on port %s\n", addr)
 
 	srv := &http.Server{
-		Addr:           port,
+		Addr:           addr,
 		Handler:        router,
 		ReadTimeout:    20 * time.Second,
 		WriteTimeout:   20 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	// Start pulse sending
-	pulseCtx, pulseCancel := context.WithCancel(context.Background())
-	healthService.StartSendingPulses(pulseCtx)
-
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logs.Error(uuid.Nil, "Failed to start server: %v", err)
+			log.Printf("Failed to start server: %v", err)
 		}
 	}()
 
-	// Wait for interrupt signal to gracefully shutdown the server
+	return srv
+}
+
+func startPulse(healthSvc service.HealthService) (context.Context, context.CancelFunc) {
+	pulseCtx, pulseCancel := context.WithCancel(context.Background())
+	healthSvc.StartSendingPulses(pulseCtx)
+	return pulseCtx, pulseCancel
+}
+
+func gracefulShutdown(srv *http.Server, healthSvc service.HealthService, logger logs.Logger) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	// Stop pulse sending
-	pulseCancel()
-
-	// The context is used to inform the server it has 5 seconds to finish
-	// the request it is currently handling
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	healthService.ServerStopped()
+	healthSvc.ServerStopped()
 	if err := srv.Shutdown(ctx); err != nil {
-		logs.Error(uuid.Nil, "Server forced to shutdown: %v", err)
+		logger.Error(uuid.Nil, "Server forced to shutdown: %v", err)
 	}
+}
+
+func main() {
+	cfg := loadConfig()
+	db := openDB(cfg.DBUrl)
+	defer db.Close()
+
+	r := initRepos(db)
+	logger, tokenService, emailService := initUtilities(cfg, r.log, r.device, r.user)
+	svcs := initServices(cfg, logger, db, r, tokenService, emailService)
+	h := initHandlers(svcs, logger, cfg)
+
+	router := buildRouter(cfg, r, logger, tokenService, h)
+
+	initHealthState(cfg, svcs.health, logger)
+
+	_, pulseCancel := startPulse(svcs.health)
+	defer pulseCancel()
+
+	srv := startHTTPServer(router, cfg.HTTPPort)
+
+	gracefulShutdown(srv, svcs.health, logger)
 }

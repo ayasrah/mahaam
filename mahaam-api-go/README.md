@@ -21,18 +21,40 @@ Configure the application using `config.json`:
 
 #### Structure
 
-```bash
+```py
 mahaam-api-go/
-├── feat/                   # Layered modules
-│   ├── handler/            # handlers/ layer
-│   ├── models/             # Data models
-│   ├── repo/               # Repo layer
-│   └── service/            # Business logic layer
-├── infra/                  # Infra utils
-├── config.example.json     # Configs
-├── go.mod                  # Go module dependencies
-├── go.sum                  # Dependency checksums
-└── main.go                 # Application entry point
+├── app/                      # Layered modules
+│   ├── handler/              # HTTP handlers
+│   │   ├── plan.go
+│   │   ├── task.go
+│   │   ├── user.go
+│   │   └── ...
+│   ├── models/               # Data models
+│   │   ├── plan.go
+│   │   ├── task.go
+│   │   ├── user.go
+│   │   └── ...
+│   ├── repo/                 # Repo layer
+│   │   ├── plan.go
+│   │   ├── task.go
+│   │   ├── user.go
+│   │   └── ...
+│   └── service/              # Business logic layer
+│   │   ├── plan.go
+│   │   ├── task.go
+│   │   ├── user.go
+│       └── ...
+├── utils/                   # App utils
+│   ├── conf/                # Configs
+│   ├── email/               # Email service
+│   ├── log/                 # Logging service
+│   ├── middleware/          # HTTP middlewares
+│   └── token/            	 # Token utils
+├── config.example.json      # Sample config
+├── go.mod
+├── go.sum
+├── main.go
+└── README.md
 ```
 
 #### Build
