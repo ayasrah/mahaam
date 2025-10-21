@@ -4,8 +4,6 @@
 
 Mahaam is an open-sourced, production-ready ToDo app implemented in C#, Java, Go, TypeScript, and Python.
 
-https://github.com/user-attachments/assets/e8332261-0de1-4fbc-88c8-040cea749488
-
 ### Purpose
 
 I started Mahaam as a proof-of-concept for different technologies and architectures. I wanted it to go deeper than the typical shallow ToDo apps, that's why I added real-world functionalites and pushed it to production to complete the cycle.
@@ -55,6 +53,8 @@ Mahaam is live on App Store and Play Store and the docs is available on [mahaam.
 </div>
 
 ### Sample screens
+
+https://github.com/user-attachments/assets/e8332261-0de1-4fbc-88c8-040cea749488
 
 <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-top:30px;">
   <img src="/mahaam-docs/docs/public/plans_screen.jpg" alt="Plans Screen" width="250" style="border: 1px solid #f0f0f0; border-radius:5px;" />
