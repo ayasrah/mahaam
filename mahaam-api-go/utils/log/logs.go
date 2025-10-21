@@ -16,11 +16,11 @@ type Logger interface {
 }
 
 type logger struct {
-	log           *zap.SugaredLogger
-	createLogFunc func(trafficId uuid.UUID, logType, message string)
+	log               *zap.SugaredLogger
+	createTrafficFunc func(trafficId uuid.UUID, logType, message string)
 }
 
-func NewLogger(cfg *conf.Conf, createLogFunc func(trafficId uuid.UUID, logType, message string)) Logger {
+func NewLogger(cfg *conf.Conf, createTrafficFunc func(trafficId uuid.UUID, logType, message string)) Logger {
 	var zapCfg zap.Config
 	if cfg.EnvName == "local" {
 		zapCfg = zap.NewDevelopmentConfig()
@@ -54,7 +54,7 @@ func NewLogger(cfg *conf.Conf, createLogFunc func(trafficId uuid.UUID, logType, 
 	)
 
 	l := zap.New(core)
-	return &logger{log: l.Sugar(), createLogFunc: createLogFunc}
+	return &logger{log: l.Sugar(), createTrafficFunc: createTrafficFunc}
 }
 
 func (l *logger) Info(trafficId uuid.UUID, args ...any) {
@@ -65,7 +65,7 @@ func (l *logger) Info(trafficId uuid.UUID, args ...any) {
 	}
 	l.log.Info(logMsg)
 	if trafficId != uuid.Nil {
-		l.createLogFunc(trafficId, "Info", msg)
+		l.createTrafficFunc(trafficId, "Info", msg)
 	}
 }
 
@@ -77,7 +77,7 @@ func (l *logger) Error(trafficId uuid.UUID, args ...any) {
 	}
 	l.log.Error(logMsg)
 	if trafficId != uuid.Nil {
-		l.createLogFunc(trafficId, "Error", msg)
+		l.createTrafficFunc(trafficId, "Error", msg)
 	}
 }
 
