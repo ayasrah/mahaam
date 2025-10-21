@@ -18,11 +18,11 @@ In the code, I tried to give the value to the business model and maintainability
 
 [Mahaam.dev](https://mahaam.dev) spotlights the following backend service concepts through Mahaam.
 
-1. **[Service Setup](https://mahaam.dev/setup/creation)**: App creation.
-2. **[Service Design](https://mahaam.dev/design/intro)**: Functionality, data model, system design, and maintainability principles.
-3. **[Service Module](https://mahaam.dev/module/intro)**: Module parts: Controller, Service and Repo.
-4. **[Service Infra](https://mahaam.dev/infra/intro)**: Shared app utilities.
-5. **[Service Testing](https://mahaam.dev/test/test)**: Integration tests.
+1. Service Setup: App creation.
+2. Service Design: Functionality, data model, system design, and maintainability principles.
+3. Service Module: Module parts: Controller, Service and Repo.
+4. Service Infra: Shared app utilities.
+5. Service Testing: Integration tests.
 
 ### Philosophy
 
