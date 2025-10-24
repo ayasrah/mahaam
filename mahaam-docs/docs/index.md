@@ -2,42 +2,35 @@
 
 ### Overview
 
-Mahaam is an open-sourced, production-ready ToDo app implemented in **`C#, Java, Go, TypeScript, and Python`**.
+Mahaam is a proof-of-concept (POC) todo app for different technologies and frameworks. Currently it is implemented in **`C#, Java, Go, TypeScript, and Python`**. The project is open-source and live on app stores.
 
-This documentation explores the following **backend service concepts** through Mahaam.
+This documentation outlines these concepts at a high level:
 
-- **`Service Setup`**: App creation.
-- **`Service Design`**: Functions, models, and design.
-- **`Service Module`**: Controllers, Services and Repositories.
-- **`Service Infra`**: App utilities.
-- **`Service Testing`**: Integration tests.
+1. **Service Setup**: Service creation.
+2. **Service Design**: Functionality, data model, api design, and maintainability.
+3. **Service Module**: Controllers, services and repositories.
+4. **Service Infra**: Service utilities.
+5. **Service Testing**: Integration tests.
 
 ### Purpose
 
-I started Mahaam as a proof of concept for different technologies and architectures. I wanted it to go deeper than the typical shallow ToDo apps, that's why I added real-world functionalites and pushed it to production to complete the cycle.
-
-### Source Code
-
-Currently, Mahaam is implemented in five languages: `C#, Java, Go, TypeScript, and Python` with exact functionality, all expose exact API endpoints and all connected to same database schema.
+I created Mahaam to be a deeper proof-of-concept, making it useful for me and others. That's why I added more functions than typical to-do apps and pushed it to production (app stores) to add real value.
 
 ### Philosophy
 
+Mahaam is implemented across different languages with identical functionality. All versions expose the same API endpoints and connect to the same database schema.
+
 Maybe one language is better than another for a specific use case; however, these principles are what Mahaam cares about regardless of language or framework, and they are common throughout:
 
-- Does the app meet **business and user** needs.
-- Is the **app model** well designed.
-- Is the codebase readable.
-- Is the codebase **maintainable**.
-- Avoid overengineering (more in Java/C# codebases).
-- Avoid spaghetti code (more in JavaScript codebases).
+- Does the app meet **business and user** needs?
+- Is the **app data model** well designed?
+- Is the codebase **readable and maintainable**?
 
 ### Target Audience
 
 Mahaam targets software engineers at all levels.
 
 ### Explore
-
-Mahaam source code is available on Github and the app is live on the App Store and Play Store.
 
 <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;margin-top: 30px;">
   <a href="https://github.com/ayasrah/mahaam" target="_blank" style="display: inline-flex; align-items: center; text-decoration: none; color: white; background-color:rgb(17, 18, 20); padding: 12px 20px; border-radius: 8px; font-weight: 500; height: 60px; box-sizing: border-box;border: 1px solid #979797;">
