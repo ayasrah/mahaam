@@ -24,7 +24,7 @@ Maybe one language is better than another for a specific use case; however, thes
 
 1. Service Setup: Service creation.
 2. Service Design: Functionality, data model, api design, and maintainability.
-3. Service Module: Controllers, services and repositories.
+3. Service Module: Controllers, services, models and repositories.
 4. Service Infra: Service utilities.
 5. Service Testing: Integration tests.
 

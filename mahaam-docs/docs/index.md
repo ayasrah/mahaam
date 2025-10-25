@@ -8,13 +8,13 @@ This documentation outlines these concepts at a high level:
 
 1. **Service Setup**: Service creation.
 2. **Service Design**: Functionality, data model, api design, and maintainability.
-3. **Service Module**: Controllers, services and repositories.
+3. **Service Module**: Controllers, services, models and repositories.
 4. **Service Infra**: Service utilities.
 5. **Service Testing**: Integration tests.
 
 ### Purpose
 
-I created Mahaam to be a deeper proof-of-concept, making it useful for me and others. That's why I added more functions than typical to-do apps and pushed it to production (app stores) to add real value.
+I created Mahaam to be a deeper proof-of-concept, making it useful for me and others. That's why I added more functions than typical todo apps and pushed it to production (app stores) to add real value.
 
 ### Philosophy
 
