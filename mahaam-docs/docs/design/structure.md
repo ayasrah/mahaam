@@ -8,25 +8,23 @@ This page discusses codebase template and folding options: feature-based and lay
 
 Having a template is important because it defines **what goes where**, making both writing and reading code easier. It saves developers from having to decide where to place each part of the code, and helps newcomers know where to find things, so its important for:
 
-- Maintainability
-- Readability
-- Avoid overengineering
-- Reduce spaghetti code
-- Reduce technical debt
+- Maintainability and readability
+- Avoiding overengineering and spaghetti code
 
-### Options
+### Archeticture Options
 
-These are common archeticture options:
+Its worthy to mention these common archetictures in this context:
 
-- **Monolith**: Modules are split by layers, and deployed as one unit.
-- **Microservices**: Each module is implemented as a microservice, deployed separately, and communicates between using APIs or message queues.
-- **Multi-project solution**: Modules are implemented as separate projects under one solution (common in Java and C#).
-- **Modular monolith**: Modules are defined as folders with clear boundaries inside a single project. It is easier to maintain and deploy, and this is Mahaam’s choice.
-- **Vertical slice**: micro-level splitting, each functionality has its own slice, e.g., `/Plan/CreatePlan.cs`, which contains both logic and database access for that functionality.
+- **Monolith App**: Codebase is split by layers under one project, and deployed as one unit.
+- **Modular monolith App**: Codebase is splitted into modules with clear boundaries under a single project, and still deployed as a single unit.
+- **Multi-project App**: Codebase is split into many projects under one solution.
+- **Microservices App**: Codebase is spit into microservices, deployed separately, and communicates between using APIs or message queues.
 
-**1. By Feature (recommended)**
+### Mahaam App Structure
 
-- Simple architecture, Group by feature, Modular monolith.
+**1. By Feature**
+
+- Simple architecture, Group by feature.
 
 ```bash
 app-be
@@ -55,33 +53,42 @@ app-be
     └── Program.cs
 ```
 
-**2. By Layer**
+**2. By Layer (In Go implementation)**
 
 ```bash
-app-be
-└── Src/
-    ├── Controller/
-    │   ├── PlanController.cs      	# Plan APIs
-    │   ├── TaskController.cs
-    │   └── UserController.cs
-    ├── Model/
-    │   ├── Plan.cs               	# Plan models
-    │   ├── Task.cs
-    │   └── User.cs
-    ├── Service/
-    │   ├── PlanService.cs        	# Plan business logic
-    │   ├── TaskService.cs
-    │   └── UserService.cs
-    ├── Repo/
-    │   ├── PlanRepo.cs           	# Plan DB operations
-    │   ├── PlanMembersRepo.cs     	# PlanMembers DB operations
-    │   ├── TaskRepo.cs
-    │   ├── UserRepo.cs
-    │   ├── DeviceRepo.cs
-    │   └── SuggestedEmailsRepo.cs
-    ├── Infra/
-    │   ...
-    └── Program.cs
+mahaam-api-go/
+├── app/                      # Layered modules
+│   ├── handler/              # HTTP handlers
+│   │   ├── plan.go
+│   │   ├── task.go
+│   │   ├── user.go
+│   │   └── ...
+│   ├── models/               # Data models
+│   │   ├── plan.go
+│   │   ├── task.go
+│   │   ├── user.go
+│   │   └── ...
+│   ├── repo/                 # Repo layer
+│   │   ├── plan.go
+│   │   ├── task.go
+│   │   ├── user.go
+│   │   └── ...
+│   └── service/              # Business logic layer
+│   │   ├── plan.go
+│   │   ├── task.go
+│   │   ├── user.go
+│       └── ...
+├── utils/                   # App utils
+│   ├── conf/                # Configs
+│   ├── email/               # Email service
+│   ├── log/                 # Logging service
+│   ├── middleware/          # HTTP middlewares
+│   └── token/            	 # Token utils
+├── config.example.json      # Sample config
+├── go.mod
+├── go.sum
+├── main.go
+└── README.md
 ```
 
 ### Infra Folder
@@ -120,6 +127,6 @@ app-be/
 
 ### Go case
 
-**Folding by feature in Go** is not straight forward while keeping interfaces in same file such what been did in `C#, Java, TS, and Python`, as it will cause **circular dependences issue**, thats why mahaam chose to fold by layer for Go project and its good change to show the app in layer structure as well.
+**Folding by feature in Go** is not straight forward while keeping interfaces in same file such what been did in `C#, Java, TS, and Python`, as it will cause **circular dependences issue** (eg: btw user and plan modules), thats why mahaam chose to fold by layer for Go project and its good change to show the app in layer structure as well.
 
 Another point in `mahaam-api-go` is placing every infra file in its own folder, and that is because in go each folder is a package, and its not allowed two files under same folder to have different packages. Mahaam needs to group and call infra utilities by their modules like: `cache.AppName`, `email.SendMeOtp`, `config.DBUrl`. Keeping all files flat under infra will not give us this, instead it will be `infra.AppName`, `infra.SendMeOtp`, `infra.DBUrl`, which mixes all functions together, thats why each file placed in its own folder.

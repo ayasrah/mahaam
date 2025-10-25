@@ -22,7 +22,7 @@ Maintainability is very important to cosider as it:
 - **Faster feature delivery**: A well-structured code makes adding/editing features easier.
 - **Faster onboarding**: New team members can understand the codebase quickly.
 
-### Pilars of maintainability
+### Steps to maintainability
 
 #### 1. Well Defined user stories
 
