@@ -27,6 +27,9 @@ public class Starter {
 	@Inject
 	Config config;
 
+	@Inject
+	Cache cache;
+
 	void onStart(@Observes StartupEvent ev) {
 		initDB();
 		Email.init(config.emailAccountSid(), config.emailVerificationServiceSid(), config.emailAuthToken());
@@ -40,15 +43,15 @@ public class Starter {
 		health.envName = config.envName();
 
 		healthService.serverStarted(health);
-		Cache.init(health);
+		cache.init(health);
 
 		String startMsg = String.format(
 				"✓ %s-v%s/%s-%s started with healthID=%s",
 				config.apiName(),
 				config.apiVersion(),
-				Cache.getNodeIP(),
-				Cache.getNodeName(),
-				Cache.getHealthId());
+				cache.nodeIP(),
+				cache.nodeName(),
+				cache.healthId());
 		Log.info(startMsg);
 
 		try {
@@ -65,9 +68,9 @@ public class Starter {
 				"✓ %s-v%s/%s-%s stopped with healthID=%s",
 				config.apiName(),
 				config.apiVersion(),
-				Cache.getNodeIP(),
-				Cache.getNodeName(),
-				Cache.getHealthId());
+				cache.nodeIP(),
+				cache.nodeName(),
+				cache.healthId());
 		Log.info(stopMsg);
 		healthService.serverStopped();
 	}

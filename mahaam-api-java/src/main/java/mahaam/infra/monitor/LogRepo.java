@@ -20,6 +20,9 @@ class DefaultLogRepo implements LogRepo {
 	@Inject
 	DB db;
 
+	@Inject
+	Cache cache;
+
 	@Override
 	public void create(UUID trafficId, String type, String message) {
 		CompletableFuture.runAsync(
@@ -34,7 +37,7 @@ class DefaultLogRepo implements LogRepo {
 								"trafficId", trafficId,
 								"type", type,
 								"message", message,
-								"node_ip", Cache.getNodeIP());
+								"node_ip", cache.nodeIP());
 
 						db.insert(query, params);
 					} catch (Exception ex) {

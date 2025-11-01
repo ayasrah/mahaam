@@ -36,6 +36,9 @@ public class Filters implements ContainerRequestFilter, ContainerResponseFilter 
 	@Inject
 	Config config;
 
+	@Inject
+	Cache cache;
+
 	private static final List<String> BYPASS_AUTH_PATHS = List.of("/swagger", "/health", "/users/create", "/audit/info",
 			"/audit/error");
 
@@ -160,7 +163,7 @@ public class Filters implements ContainerRequestFilter, ContainerResponseFilter 
 
 			Traffic traffic = new Traffic(
 					Req.getTrafficId(),
-					Cache.getHealthId(),
+					cache.healthId(),
 					requestContext.getMethod(),
 					fullPath,
 					responseContext.getStatus(),

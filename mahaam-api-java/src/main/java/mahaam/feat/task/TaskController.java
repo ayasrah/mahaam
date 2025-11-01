@@ -35,7 +35,7 @@ public interface TaskController {
 
 @ApplicationScoped
 @Path("/plans/{planId}/tasks")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.APPLICATION_JSON)
 class DefaultTaskController implements TaskController {
 
@@ -43,7 +43,6 @@ class DefaultTaskController implements TaskController {
 	TaskService taskService;
 
 	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response create(@PathParam("planId") UUID planId, @FormParam("title") String title) {
 		Rule.required(planId, "planId");
 		Rule.required(title, "title");
@@ -64,7 +63,6 @@ class DefaultTaskController implements TaskController {
 
 	@PATCH
 	@Path("/{id}/done")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response updateDone(
 			@PathParam("planId") UUID planId,
 			@PathParam("id") UUID id,
@@ -79,7 +77,6 @@ class DefaultTaskController implements TaskController {
 
 	@PATCH
 	@Path("/{id}/title")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response updateTitle(@PathParam("id") UUID id, @FormParam("title") String title) {
 		Rule.required(id, "id");
 		Rule.required(title, "title");
@@ -90,7 +87,6 @@ class DefaultTaskController implements TaskController {
 
 	@PATCH
 	@Path("/reorder")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response reOrder(
 			@PathParam("planId") UUID planId,
 			@FormParam("oldOrder") int oldOrder,

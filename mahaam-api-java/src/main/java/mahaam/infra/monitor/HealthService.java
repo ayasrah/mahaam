@@ -23,6 +23,9 @@ class DefaultHealthService implements HealthService {
 	@Inject
 	HealthRepo healthRepo;
 
+	@Inject
+	Cache cache;
+
 	private static final AtomicBoolean pulseSendingActive = new AtomicBoolean(false);
 	private static CompletableFuture<Void> pulseTask;
 
@@ -42,8 +45,8 @@ class DefaultHealthService implements HealthService {
 							pulseTask.cancel(true);
 						}
 
-						if (Cache.getHealthId() != null) {
-							healthRepo.updateStopped(Cache.getHealthId());
+						if (cache.healthId() != null) {
+							healthRepo.updateStopped(cache.healthId());
 						}
 					} catch (Exception e) {
 						Log.error(e.toString());
@@ -59,8 +62,8 @@ class DefaultHealthService implements HealthService {
 					() -> {
 						while (pulseSendingActive.get()) {
 							try {
-								if (Cache.getHealthId() != null) {
-									healthRepo.updatePulse(Cache.getHealthId());
+								if (cache.healthId() != null) {
+									healthRepo.updatePulse(cache.healthId());
 								}
 								Thread.sleep(60000); // 1 minute
 							} catch (InterruptedException e) {

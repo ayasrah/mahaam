@@ -49,7 +49,7 @@ public interface PlanController {
 
 @ApplicationScoped
 @Path("/plans")
-@Consumes(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.APPLICATION_JSON)
 class DefaultPlanController implements PlanController {
 
@@ -57,6 +57,7 @@ class DefaultPlanController implements PlanController {
 	PlanService planService;
 
 	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response create(PlanIn plan) {
 		Rule.required(plan, "plan");
 		Rule.oneAtLeastRequired(Arrays.asList(plan.title, plan.starts, plan.ends),
@@ -67,6 +68,7 @@ class DefaultPlanController implements PlanController {
 	}
 
 	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update(PlanIn plan) {
 		Rule.required(plan, "plan");
 		Rule.required(plan.id, "Id");
@@ -87,7 +89,6 @@ class DefaultPlanController implements PlanController {
 
 	@PATCH
 	@Path("/{id}/share")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response share(@PathParam("id") UUID id, @FormParam("email") String email) {
 		Rule.required(id, "id");
 		Rule.required(email, "email");
@@ -98,7 +99,6 @@ class DefaultPlanController implements PlanController {
 
 	@PATCH
 	@Path("/{id}/unshare")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response unshare(@PathParam("id") UUID id, @FormParam("email") String email) {
 		Rule.required(id, "id");
 		Rule.required(email, "email");
@@ -117,7 +117,6 @@ class DefaultPlanController implements PlanController {
 
 	@PATCH
 	@Path("/{id}/type")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response updateType(@PathParam("id") UUID id, @FormParam("type") String type) {
 		Rule.required(id, "id");
 		Rule.required(type, "type");
@@ -129,7 +128,6 @@ class DefaultPlanController implements PlanController {
 
 	@PATCH
 	@Path("/reorder")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response reOrder(@FormParam("type") String type, @FormParam("oldOrder") int oldOrder,
 			@FormParam("newOrder") int newOrder) {
 		Rule.required(type, "type");
