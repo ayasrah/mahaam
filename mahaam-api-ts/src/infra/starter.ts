@@ -32,7 +32,7 @@ export class Starter {
     Cache.init(health);
 
     // Log startup message
-    const startMsg = `✓ ${Cache.getApiName()}-v${Cache.getApiVersion()}/${Cache.getNodeIP()}-${Cache.getNodeName()} started with healthID=${Cache.getHealthId()}`;
+    const startMsg = `✓ ${Config.apiName}-v${Config.apiVersion}/${Cache.getNodeIP()}-${Cache.getNodeName()} started with healthID=${Cache.getHealthId()}`;
     Log.info(startMsg);
 
     // Health service already handles starting pulses internally
