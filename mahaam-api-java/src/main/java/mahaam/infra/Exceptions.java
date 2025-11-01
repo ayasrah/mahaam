@@ -1,5 +1,7 @@
 package mahaam.infra;
 
+import jakarta.ws.rs.core.Response;
+
 public class Exceptions {
 
 	public abstract static class AppException extends RuntimeException {
@@ -28,35 +30,35 @@ public class Exceptions {
 
 	public static class UnauthorizedException extends AppException {
 		public UnauthorizedException(String message) {
-			super(message, Http.UnAuthorized);
+			super(message, Response.Status.UNAUTHORIZED.getStatusCode());
 		}
 	}
 
 	public static class ForbiddenException extends AppException {
 		public ForbiddenException(String message) {
-			super(message, Http.Forbidden);
+			super(message, Response.Status.FORBIDDEN.getStatusCode());
 		}
 	}
 
 	public static class LogicException extends AppException {
 		public LogicException(String message) {
-			super(message, Http.Conflict);
+			super(message, Response.Status.CONFLICT.getStatusCode());
 		}
 
 		public LogicException(String message, String key) {
-			super(message, Http.Conflict, key);
+			super(message, Response.Status.CONFLICT.getStatusCode(), key);
 		}
 	}
 
 	public static class NotFoundException extends AppException {
 		public NotFoundException(String message) {
-			super(message, Http.NotFound);
+			super(message, Response.Status.NOT_FOUND.getStatusCode());
 		}
 	}
 
 	public static class InputException extends AppException {
 		public InputException(String message) {
-			super(message, Http.BadRequest);
+			super(message, Response.Status.BAD_REQUEST.getStatusCode());
 		}
 	}
 }

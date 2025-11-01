@@ -14,8 +14,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import mahaam.infra.Http;
 import mahaam.infra.Json;
 import mahaam.infra.Rule;
 
@@ -35,21 +35,21 @@ public interface TaskController {
 
 @ApplicationScoped
 @Path("/plans/{planId}/tasks")
-@Consumes(Http.JsonMedia)
-@Produces(Http.JsonMedia)
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 class DefaultTaskController implements TaskController {
 
 	@Inject
 	TaskService taskService;
 
 	@POST
-	@Consumes(Http.FormMedia)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response create(@PathParam("planId") UUID planId, @FormParam("title") String title) {
 		Rule.required(planId, "planId");
 		Rule.required(title, "title");
 
 		UUID id = taskService.create(planId, title);
-		return Response.status(Http.Created).entity(Json.toString(id)).build();
+		return Response.status(Response.Status.CREATED).entity(Json.toString(id)).build();
 	}
 
 	@DELETE
@@ -59,12 +59,12 @@ class DefaultTaskController implements TaskController {
 		Rule.required(id, "id");
 
 		taskService.delete(planId, id);
-		return Response.status(Http.NoContent).build();
+		return Response.noContent().build();
 	}
 
 	@PATCH
 	@Path("/{id}/done")
-	@Consumes(Http.FormMedia)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response updateDone(
 			@PathParam("planId") UUID planId,
 			@PathParam("id") UUID id,
@@ -74,23 +74,23 @@ class DefaultTaskController implements TaskController {
 		Rule.required(done, "done");
 
 		taskService.updateDone(planId, id, done);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@PATCH
 	@Path("/{id}/title")
-	@Consumes(Http.FormMedia)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response updateTitle(@PathParam("id") UUID id, @FormParam("title") String title) {
 		Rule.required(id, "id");
 		Rule.required(title, "title");
 
 		taskService.updateTitle(id, title);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@PATCH
 	@Path("/reorder")
-	@Consumes(Http.FormMedia)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response reOrder(
 			@PathParam("planId") UUID planId,
 			@FormParam("oldOrder") int oldOrder,
@@ -100,7 +100,7 @@ class DefaultTaskController implements TaskController {
 		Rule.required(newOrder, "newOrder");
 
 		taskService.reOrder(planId, oldOrder, newOrder);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@GET
@@ -108,6 +108,6 @@ class DefaultTaskController implements TaskController {
 		Rule.required(planId, "planId");
 
 		List<Task> result = taskService.getList(planId);
-		return Response.status(Http.OK).entity(Json.toString(result)).build();
+		return Response.ok(Json.toString(result)).build();
 	}
 }

@@ -24,25 +24,28 @@ public class Starter {
 	@Inject
 	DB db;
 
+	@Inject
+	Config config;
+
 	void onStart(@Observes StartupEvent ev) {
 		initDB();
-		Email.init(Config.emailAccountSid, Config.emailVerificationServiceSid, Config.emailAuthToken);
+		Email.init(config.emailAccountSid(), config.emailVerificationServiceSid(), config.emailAuthToken());
 
 		Health health = new Health();
 		health.id = UUID.randomUUID();
-		health.apiName = Config.apiName;
-		health.apiVersion = Config.apiVersion;
+		health.apiName = config.apiName();
+		health.apiVersion = config.apiVersion();
 		health.nodeIP = getNodeIP();
 		health.nodeName = getNodeName();
-		health.envName = Config.envName;
+		health.envName = config.envName();
 
 		healthService.serverStarted(health);
 		Cache.init(health);
 
 		String startMsg = String.format(
 				"✓ %s-v%s/%s-%s started with healthID=%s",
-				Config.apiName,
-				Config.apiVersion,
+				config.apiName(),
+				config.apiVersion(),
 				Cache.getNodeIP(),
 				Cache.getNodeName(),
 				Cache.getHealthId());
@@ -60,8 +63,8 @@ public class Starter {
 	void onStop(@Observes ShutdownEvent ev) {
 		String stopMsg = String.format(
 				"✓ %s-v%s/%s-%s stopped with healthID=%s",
-				Config.apiName,
-				Config.apiVersion,
+				config.apiName(),
+				config.apiVersion(),
 				Cache.getNodeIP(),
 				Cache.getNodeName(),
 				Cache.getHealthId());
@@ -73,7 +76,7 @@ public class Starter {
 		db.init();
 		String pattern = "jdbc:postgresql://([^:/]+)";
 		Pattern regex = Pattern.compile(pattern);
-		Matcher match = regex.matcher(Config.dbUrl);
+		Matcher match = regex.matcher(config.dbUrl());
 		String host = match.find() ? match.group(1) : "unknown";
 		Log.info("✓ Connected to DB on server " + host);
 	}
@@ -88,7 +91,7 @@ public class Starter {
 		}
 	}
 
-	private static String getNodeName() {
+	private String getNodeName() {
 		try {
 			return InetAddress.getLocalHost().getHostName();
 		} catch (Exception e) {

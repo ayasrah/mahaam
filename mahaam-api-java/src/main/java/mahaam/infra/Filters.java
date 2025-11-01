@@ -13,6 +13,7 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -31,6 +32,9 @@ public class Filters implements ContainerRequestFilter, ContainerResponseFilter 
 
 	@Inject
 	Security security;
+
+	@Inject
+	Config config;
 
 	private static final List<String> BYPASS_AUTH_PATHS = List.of("/swagger", "/health", "/users/create", "/audit/info",
 			"/audit/error");
@@ -70,7 +74,7 @@ public class Filters implements ContainerRequestFilter, ContainerResponseFilter 
 		}
 
 		// Read and store payload
-		if (Config.logReqEnabled) {
+		if (config.logReqEnabled()) {
 			String reqBody = getReqBody(reqCtx);
 			reqCtx.setProperty("reqBody", reqBody);
 		}
@@ -193,7 +197,7 @@ class ExceptionFilter implements ExceptionMapper<Throwable> {
 	public Response toResponse(Throwable exception) {
 
 		String response = Json.toString(exception.getMessage());
-		int statusCode = Http.ServerError;
+		int statusCode = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
 		exception.printStackTrace();
 		Log.error(exception.toString());
 		if (exception instanceof AppException) {
@@ -206,7 +210,7 @@ class ExceptionFilter implements ExceptionMapper<Throwable> {
 			}
 		}
 
-		return Response.status(statusCode).entity(response).type(Http.JsonMedia).build();
+		return Response.status(statusCode).entity(response).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	private static class ErrorResponse {

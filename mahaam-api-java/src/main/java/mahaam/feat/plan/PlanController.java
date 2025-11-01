@@ -17,11 +17,11 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import mahaam.feat.plan.PlanModel.Plan;
 import mahaam.feat.plan.PlanModel.PlanIn;
 import mahaam.feat.plan.PlanModel.PlanType;
-import mahaam.infra.Http;
 import mahaam.infra.Json;
 import mahaam.infra.Rule;
 
@@ -49,8 +49,8 @@ public interface PlanController {
 
 @ApplicationScoped
 @Path("/plans")
-@Consumes(Http.JsonMedia)
-@Produces(Http.JsonMedia)
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 class DefaultPlanController implements PlanController {
 
 	@Inject
@@ -63,7 +63,7 @@ class DefaultPlanController implements PlanController {
 				"title or starts or ends is required");
 
 		UUID id = planService.create(plan);
-		return Response.status(Http.Created).entity(Json.toString(id)).build();
+		return Response.status(Response.Status.CREATED).entity(Json.toString(id)).build();
 	}
 
 	@PUT
@@ -74,7 +74,7 @@ class DefaultPlanController implements PlanController {
 				"title or starts or ends is required");
 
 		planService.update(plan);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@DELETE
@@ -82,29 +82,29 @@ class DefaultPlanController implements PlanController {
 	public Response delete(@PathParam("id") UUID id) {
 		Rule.required(id, "id");
 		planService.delete(id);
-		return Response.status(Http.NoContent).build();
+		return Response.noContent().build();
 	}
 
 	@PATCH
 	@Path("/{id}/share")
-	@Consumes(Http.FormMedia)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response share(@PathParam("id") UUID id, @FormParam("email") String email) {
 		Rule.required(id, "id");
 		Rule.required(email, "email");
 
 		planService.share(id, email);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@PATCH
 	@Path("/{id}/unshare")
-	@Consumes(Http.FormMedia)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response unshare(@PathParam("id") UUID id, @FormParam("email") String email) {
 		Rule.required(id, "id");
 		Rule.required(email, "email");
 
 		planService.unshare(id, email);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@PATCH
@@ -112,24 +112,24 @@ class DefaultPlanController implements PlanController {
 	public Response leave(@PathParam("id") UUID id) {
 		Rule.required(id, "id");
 		planService.leave(id);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@PATCH
 	@Path("/{id}/type")
-	@Consumes(Http.FormMedia)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response updateType(@PathParam("id") UUID id, @FormParam("type") String type) {
 		Rule.required(id, "id");
 		Rule.required(type, "type");
 		Rule.in(type, PlanType.ALL);
 
 		planService.updateType(id, type);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@PATCH
 	@Path("/reorder")
-	@Consumes(Http.FormMedia)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response reOrder(@FormParam("type") String type, @FormParam("oldOrder") int oldOrder,
 			@FormParam("newOrder") int newOrder) {
 		Rule.required(type, "type");
@@ -137,7 +137,7 @@ class DefaultPlanController implements PlanController {
 		Rule.required(oldOrder, "oldOrder");
 		Rule.required(newOrder, "newOrder");
 		planService.reOrder(type, oldOrder, newOrder);
-		return Response.status(Http.OK).build();
+		return Response.ok().build();
 	}
 
 	@GET
@@ -146,7 +146,7 @@ class DefaultPlanController implements PlanController {
 		Rule.required(planId, "planId");
 
 		Plan plan = planService.getOne(planId);
-		return Response.status(Http.OK).entity(Json.toString(plan)).build();
+		return Response.ok().entity(Json.toString(plan)).build();
 	}
 
 	@GET
@@ -158,6 +158,6 @@ class DefaultPlanController implements PlanController {
 		}
 
 		List<Plan> plans = planService.getMany(type);
-		return Response.status(Http.OK).entity(Json.toString(plans)).build();
+		return Response.ok().entity(Json.toString(plans)).build();
 	}
 }

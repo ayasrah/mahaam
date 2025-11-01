@@ -57,6 +57,12 @@ class DefaultUserService implements UserService {
 	@Inject
 	PlanRepo planRepo;
 
+	@Inject
+	Config config;
+
+	@Inject
+	Security security;
+
 	@Override
 	@Transactional
 	public CreatedUser create(Device device) {
@@ -73,7 +79,7 @@ class DefaultUserService implements UserService {
 		deviceRepo.deleteByFingerprint(device.fingerprint);
 		UUID deviceId = deviceRepo.create(deviceWithUserId);
 
-		String jwt = Security.createToken(userId.toString(), deviceId.toString());
+		String jwt = security.createToken(userId.toString(), deviceId.toString());
 
 		Log.info("User Created with id:" + userId + ", deviceId:" + deviceId + ".");
 		CreatedUser createdUser = new CreatedUser();
@@ -86,8 +92,8 @@ class DefaultUserService implements UserService {
 	@Override
 	public String sendMeOtp(String email) {
 		String verifySid;
-		if (Config.testEmails.contains(email)) {
-			verifySid = Config.testSID;
+		if (config.testEmails().contains(email)) {
+			verifySid = config.testSID();
 		} else {
 			verifySid = Email.sendOtp(email);
 		}
@@ -103,9 +109,9 @@ class DefaultUserService implements UserService {
 	@Transactional
 	public VerifiedUser verifyOtp(String email, String sid, String otp) {
 		String otpStatus;
-		if (Config.testEmails.contains(email)
-				&& Config.testSID.equals(sid)
-				&& Config.testOTP.equals(otp)) {
+		if (config.testEmails().contains(email)
+				&& config.testSID().equals(sid)
+				&& config.testOTP().equals(otp)) {
 			otpStatus = "approved";
 		} else {
 			otpStatus = Email.verifyOtp(otp, sid, email);
@@ -138,7 +144,7 @@ class DefaultUserService implements UserService {
 		}
 
 		UUID newUserId = user == null ? userId : user.id;
-		String jwt = Security.createToken(newUserId.toString(), deviceId.toString());
+		String jwt = security.createToken(newUserId.toString(), deviceId.toString());
 
 		Log.info("OTP verified for " + email);
 		VerifiedUser verifiedUser = new VerifiedUser();
@@ -155,7 +161,7 @@ class DefaultUserService implements UserService {
 		UUID userId = Req.getUserId();
 		UUID deviceId = Req.getDeviceId();
 		User user = userRepo.getOne(userId);
-		String jwt = Security.createToken(userId.toString(), deviceId.toString());
+		String jwt = security.createToken(userId.toString(), deviceId.toString());
 
 		VerifiedUser verifiedUser = new VerifiedUser();
 		verifiedUser.userId = userId;
@@ -195,9 +201,9 @@ class DefaultUserService implements UserService {
 		User user = userRepo.getOne(Req.getUserId());
 
 		String otpStatus;
-		if (Config.testEmails.contains(user.email)
-				&& Config.testSID.equals(sid)
-				&& Config.testOTP.equals(otp)) {
+		if (config.testEmails().contains(user.email)
+				&& config.testSID().equals(sid)
+				&& config.testOTP().equals(otp)) {
 			otpStatus = "approved";
 		} else {
 			otpStatus = Email.verifyOtp(otp, sid, user.email);

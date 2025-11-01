@@ -4,9 +4,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import mahaam.infra.Cache;
-import mahaam.infra.Http;
 import mahaam.infra.monitor.MonitorModel.Health;
 
 public interface HealthController {
@@ -18,7 +18,7 @@ public interface HealthController {
 class DefaultHealthController implements HealthController {
 
 	@GET
-	@Produces(Http.JsonMedia)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInfo() {
 		Health health = new Health();
 		health.apiName = Cache.getApiName();

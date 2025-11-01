@@ -27,6 +27,9 @@ public class Security {
 	@Inject
 	UserRepo userRepo;
 
+	@Inject
+	Config config;
+
 	public static class AuthResult {
 		private UUID userId;
 		private UUID deviceId;
@@ -76,9 +79,9 @@ public class Security {
 		String tokenString = authorization.substring(7); // Remove 'Bearer ' to get the jwt
 
 		try {
-			JWT.validate(tokenString);
+			validate(tokenString);
 			Claims claims = Jwts.parserBuilder()
-					.setSigningKey(JWT.getSecurityKey())
+					.setSigningKey(getSecurityKey())
 					.build()
 					.parseClaimsJws(tokenString)
 					.getBody();
@@ -111,47 +114,41 @@ public class Security {
 		}
 	}
 
-	public static String createToken(String userId, String deviceId) {
-		return JWT.create(userId, deviceId);
-	}
+	public String createToken(String userId, String deviceId) {
+		try {
+			Key key = getSecurityKey();
+			Date now = new Date();
+			Date expiration = new Date(now.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7 days
 
-	static class JWT {
+			return Jwts.builder()
+					.claim("userId", userId)
+					.claim("deviceId", deviceId)
+					.setIssuedAt(now)
+					.setExpiration(expiration)
+					.setIssuer("mahaam-api")
+					.signWith(key, SignatureAlgorithm.HS256)
+					.compact();
 
-		public static String create(String userId, String deviceId) {
-			try {
-				Key key = getSecurityKey();
-				Date now = new Date();
-				Date expiration = new Date(now.getTime() + (7 * 24 * 60 * 60 * 1000)); // 7 days
-
-				return Jwts.builder()
-						.claim("userId", userId)
-						.claim("deviceId", deviceId)
-						.setIssuedAt(now)
-						.setExpiration(expiration)
-						.setIssuer("mahaam-api")
-						.signWith(key, SignatureAlgorithm.HS256)
-						.compact();
-
-			} catch (Exception e) {
-				throw new RuntimeException("Error creating JWT token: " + e.getMessage(), e);
-			}
-		}
-
-		public static void validate(String token) {
-			try {
-				Jwts.parserBuilder()
-						.setSigningKey(getSecurityKey())
-						.requireIssuer("mahaam-api")
-						.build()
-						.parseClaimsJws(token);
-			} catch (Exception e) {
-				throw new RuntimeException("JWT validation failed: " + e.getMessage(), e);
-			}
-		}
-
-		public static Key getSecurityKey() {
-			byte[] keyBytes = Config.tokenSecretKey.getBytes(StandardCharsets.UTF_8);
-			return Keys.hmacShaKeyFor(keyBytes);
+		} catch (Exception e) {
+			throw new RuntimeException("Error creating JWT token: " + e.getMessage(), e);
 		}
 	}
+
+	private void validate(String token) {
+		try {
+			Jwts.parserBuilder()
+					.setSigningKey(getSecurityKey())
+					.requireIssuer("mahaam-api")
+					.build()
+					.parseClaimsJws(token);
+		} catch (Exception e) {
+			throw new RuntimeException("JWT validation failed: " + e.getMessage(), e);
+		}
+	}
+
+	private Key getSecurityKey() {
+		byte[] keyBytes = config.tokenSecretKey().getBytes(StandardCharsets.UTF_8);
+		return Keys.hmacShaKeyFor(keyBytes);
+	}
+
 }
