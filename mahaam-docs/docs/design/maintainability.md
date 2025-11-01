@@ -34,7 +34,7 @@ Mahaam highly recommend to interact with users, product and domain experts durin
 
 If database design is mess, its very difficult to fix anything else. This is part of the big picture of the app.
 
-Mahaam highly recommend to consult DB team when creating and reviewing the database schema, and reviewing the sqls as well.
+Mahaam highly recommend to consult system analysts and DB team when creating and reviewing the database schema, and reviewing the sqls as well.
 
 #### 3. Simple Structure
 
@@ -104,6 +104,7 @@ src/
 ```
 
 - Once reader open any feat, eg , `Task`, he read the interface and know **what are the functionalities**
+- Interfaces are contracts, they tell what are available actions, so they provide a value even class has only one implementation.
 
 ```C#
 public interface ITaskController

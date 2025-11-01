@@ -13,8 +13,8 @@ To ensure data consistency.
 - If all operation succeed, commit is done.
 - If any operation fails, rollback is done.
 - Mahaam manages transactions in the service layer, since all db operations are initiated there.
-- In `C# and Java`, the framework is doning commit and rollback (ambient transaction) via `TransactionScope` and `@Transactional`, which makes things simpler.
-- In Go, Javascript, and Python, commit and rollback are done manually.
+- In `C# and Java`, the framework is doning commit and rollback (ambient transaction) via `TransactionScope` and `@Transactional`.
+- In Go, Javascript, and Python, commit and rollback are done manually: `transaction.begin`,`transaction.commit` or `transaction.rollback`.
 - Log and traffic repos are execluded from transactions (`suppressed`), so audits are created to db even the transaction is rolled back for that request. Its recommeded to place the log at the end of the method, eg: after `scope.Complete();` to make sure transaction is completed.
 
 #### Mahaam Code

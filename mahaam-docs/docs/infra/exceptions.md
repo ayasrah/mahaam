@@ -303,7 +303,7 @@ def handle_exception( e: Exception, traffic_id: uuid.UUID) -> tuple[str, int]:
 
 ### Go case
 
-Go traditionally avoids exceptions in favor of returning errors. However, `mahaam-api-go` follows the same exception handling pattern used in other Mahaam backends like `mahaam-api-cs`, `mahaam-api-java`, etc.
+Go traditionally avoids exceptions in favor of returning errors. However, `mahaam-api-go` follows the principle to break the request flow then catch and handle on the top level.
 
 From the official [Go blog on defer, panic, and recover](https://go.dev/blog/defer-panic-and-recover):
 
