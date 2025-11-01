@@ -10,19 +10,21 @@ public interface IHealthController
 
 [ApiController]
 [Route("health")]
-public class HealthController : ControllerBase, IHealthController
+public class HealthController(Settings settings, ICache cache) : ControllerBase, IHealthController
 {
+	private readonly Settings _settings = settings;
+	private readonly ICache _cache = cache;
 	[HttpGet]
 	public IActionResult GetStatus()
 	{
 		var result = new Health()
 		{
-			Id = Cache.HealthId,
-			ApiName = Cache.ApiName,
-			ApiVersion = Cache.ApiVersion,
-			NodeIP = Cache.NodeIP,
-			NodeName = Cache.NodeName,
-			EnvName = Cache.EnvName
+			Id = _cache.HealthId(),
+			ApiName = _settings.Api.Name,
+			ApiVersion = _settings.Api.Version,
+			NodeIP = _cache.NodeIP(),
+			NodeName = _cache.NodeName(),
+			EnvName = _settings.Api.EnvName
 		};
 		return Ok(result);
 	}

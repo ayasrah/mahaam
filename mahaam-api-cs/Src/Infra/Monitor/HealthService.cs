@@ -8,12 +8,12 @@ public interface IHealthService
 	void ServerStopped();
 }
 
-public class HealthService(IHealthRepo healthRepo, ILog log, Settings settings) : IHealthService
+public class HealthService(IHealthRepo healthRepo, ILog log, Settings settings, ICache cache) : IHealthService
 {
 	private readonly IHealthRepo _healthRepo = healthRepo;
 	private readonly ILog _log = log;
 	private readonly Settings _settings = settings;
-
+	private readonly ICache _cache = cache;
 	public void ServerStarted(Health health)
 	{
 		_healthRepo.Create(health).GetAwaiter().GetResult();
@@ -27,7 +27,7 @@ public class HealthService(IHealthRepo healthRepo, ILog log, Settings settings) 
 			{
 				try
 				{
-					_healthRepo.UpdatePulse(Cache.HealthId);
+					_healthRepo.UpdatePulse(_cache.HealthId());
 					Thread.Sleep(1000 * 60); // 1 minute
 				}
 				catch (Exception e)
@@ -44,8 +44,8 @@ public class HealthService(IHealthRepo healthRepo, ILog log, Settings settings) 
 		{
 			try
 			{
-				_healthRepo.UpdateStopped(Cache.HealthId);
-				var stopMsg = $"✓ {_settings.Api.Name}-v{_settings.Api.Version}/{Cache.NodeIP}-{Cache.NodeName} stopped with healthID={Cache.HealthId}";
+				_healthRepo.UpdateStopped(_cache.HealthId());
+				var stopMsg = $"✓ {_settings.Api.Name}-v{_settings.Api.Version}/{_cache.NodeIP()}-{_cache.NodeName()} stopped with healthID={_cache.HealthId()}";
 				_log.Info(stopMsg);
 			}
 			catch (Exception e)

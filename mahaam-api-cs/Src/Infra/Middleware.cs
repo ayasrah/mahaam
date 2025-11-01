@@ -6,13 +6,14 @@ using Mahaam.Infra.Monitoring;
 
 namespace Mahaam.Infra;
 
-public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog log, IAuth authService, Settings settings)
+public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog log, IAuth authService, Settings settings, ICache cache)
 {
 	private readonly RequestDelegate _next = next;
 	private readonly ITrafficRepo _trafficRepo = trafficRepo;
 	private readonly ILog _log = log;
 	private readonly IAuth _authService = authService;
 	private readonly Settings _settings = settings;
+	private readonly ICache _cache = cache;
 	public async Task Invoke(HttpContext context)
 	{
 		var stopwatch = new Stopwatch();
@@ -151,7 +152,7 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 			Headers = Newtonsoft.Json.JsonConvert.SerializeObject(headers),
 			Request = request,
 			Response = string.IsNullOrEmpty(response) ? null : response,
-			HealthId = Cache.HealthId
+			HealthId = _cache.HealthId()
 		};
 		_trafficRepo.Create(traffic);
 	}

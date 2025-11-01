@@ -27,8 +27,9 @@ public class Starter
 			EnvName = settings.Api.EnvName
 		};
 		app.Services.GetService<IHealthService>()?.ServerStarted(health);
-		Cache.Init(health);
-		var startMsg = $"✓ {settings.Api.Name}-v{settings.Api.Version}/{Cache.NodeIP}-{Cache.NodeName} started with healthID={Cache.HealthId}";
+		var cache = app.Services.GetService<ICache>();
+		cache?.Init(health);
+		var startMsg = $"✓ {settings.Api.Name}-v{settings.Api.Version}/{cache.NodeIP()}-{cache.NodeName()} started with healthID={cache.HealthId()}";
 		app.Services.GetService<ILog>()?.Info(startMsg);
 		Thread.Sleep(2000);
 		app.Services.GetService<IHealthService>()?.StartSendingPulses();

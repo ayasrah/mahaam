@@ -8,9 +8,10 @@ public interface ILogRepo
 	void Create(string type, string message, Guid? trafficId);
 }
 
-public class LogRepo(IDB db) : ILogRepo
+public class LogRepo(IDB db, ICache cache) : ILogRepo
 {
 	private readonly IDB _db = db;
+	private readonly ICache _cache = cache;
 	public void Create(string type, string message, Guid? trafficId)
 	{
 		var err = new
@@ -18,7 +19,7 @@ public class LogRepo(IDB db) : ILogRepo
 			trafficId,
 			type,
 			message,
-			node_ip = Cache.NodeIP,
+			node_ip = _cache.NodeIP(),
 		};
 		var query = @"INSERT INTO x_log (traffic_id, type, message, node_ip, created_at) 
 			VALUES (@trafficId, @type, @message, @node_ip, current_timestamp)";

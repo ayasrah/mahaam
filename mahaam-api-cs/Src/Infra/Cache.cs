@@ -5,19 +5,24 @@ using Mahaam.Infra.Monitoring;
 
 namespace Mahaam.Infra;
 
-class Cache
+public interface ICache
 {
-	public static void Init(Health health)
+	void Init(Health health);
+	string NodeIP();
+	string NodeName();
+	Guid HealthId();
+}
+
+class Cache : ICache
+{
+	private Health? _health;
+
+	public void Init(Health health)
 	{
 		_health = health;
 	}
 
-	private static Health? _health;
-
-	public static string NodeIP => _health?.NodeIP ?? "";
-	public static string NodeName => _health?.NodeName ?? "";
-	public static string ApiName => _health?.ApiName ?? "";
-	public static string ApiVersion => _health?.ApiVersion ?? "";
-	public static string EnvName => _health?.EnvName ?? "";
-	public static Guid HealthId => _health?.Id ?? Guid.Empty;
+	public string NodeIP() => _health?.NodeIP ?? "";
+	public string NodeName() => _health?.NodeName ?? "";
+	public Guid HealthId() => _health?.Id ?? Guid.Empty;
 }

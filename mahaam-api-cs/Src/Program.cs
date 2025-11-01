@@ -102,6 +102,7 @@ app.Services.GetService<IHealthService>()?.ServerStopped();
 
 static void _addServices(IServiceCollection services)
 {
+	services.AddSingleton<ICache, Cache>();
 	services.AddSingleton<IAuth, Auth>();
 	services.AddSingleton<ILog, Mahaam.Infra.Log>();
 	services.AddSingleton<IEmail, Email>();
