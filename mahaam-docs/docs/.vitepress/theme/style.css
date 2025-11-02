@@ -150,3 +150,42 @@
   font-weight: normal !important;
   color: #cccccc !important;
 }
+
+/* Style the GitHub social link to match the star button */
+.VPSocialLinks .VPSocialLink:first-child {
+  background: linear-gradient(180deg, #fafbfc 0%, #eff3f6 90%) !important;
+  border: 1px solid #d1d9e0 !important;
+  border-radius: 8px !important;
+  padding: 2px 10px !important;
+  /* box-shadow: 0 1px 0 rgba(27, 31, 35, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important; */
+  width: auto !important;
+  height: auto !important;
+  transition: all 0.2s ease !important;
+  margin-right: 8px !important;
+}
+
+.VPSocialLinks .VPSocialLink:first-child svg {
+  margin-right: 4px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.VPSocialLinks .VPSocialLink:first-child span {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #111213 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Dark theme support for GitHub social link */
+.dark .VPSocialLinks .VPSocialLink:first-child {
+  background: linear-gradient(180deg, #30363d 0%, #21262d 90%) !important;
+  border-color: #30363d !important;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark .VPSocialLinks .VPSocialLink:first-child span,
+.dark .VPSocialLinks .VPSocialLink:first-child svg {
+  color: #f0f6fc !important;
+}
