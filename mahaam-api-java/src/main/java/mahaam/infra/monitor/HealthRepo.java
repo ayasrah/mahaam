@@ -25,7 +25,7 @@ class DefaultHealthRepo implements HealthRepo {
 	@Override
 	public int create(Health health) {
 		String query = """
-				INSERT INTO x_health (id, api_name, api_version, env_name, node_ip, node_name, started_at)
+				INSERT INTO monitor.health (id, api_name, api_version, env_name, node_ip, node_name, started_at)
 				VALUES (:id, :apiName, :apiVersion, :envName, :nodeIP, :nodeName, current_timestamp)
 				""";
 		var params = Mapper.of(
@@ -41,13 +41,13 @@ class DefaultHealthRepo implements HealthRepo {
 
 	@Override
 	public int updatePulse(UUID id) {
-		String query = "UPDATE x_health SET pulsed_at = current_timestamp WHERE id = :id";
+		String query = "UPDATE monitor.health SET pulsed_at = current_timestamp WHERE id = :id";
 		return db.update(query, Mapper.of("id", id));
 	}
 
 	@Override
 	public int updateStopped(UUID id) {
-		String query = "UPDATE x_health SET stopped_at = current_timestamp WHERE id = :id";
+		String query = "UPDATE monitor.health SET stopped_at = current_timestamp WHERE id = :id";
 		return db.update(query, Mapper.of("id", id));
 	}
 }

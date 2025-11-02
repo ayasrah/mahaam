@@ -18,7 +18,7 @@ func NewTrafficRepo(db *AppDB) TrafficRepo {
 
 func (r *trafficRepo) Create(traffic models.Traffic) int64 {
 	query := `
-		INSERT INTO x_traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at)
+		INSERT INTO monitor.traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at)
 		VALUES (:id, :health_id, :method, :path, :code, :elapsed, :headers, :request, :response, current_timestamp)`
 	return execute(r.db, query, traffic)
 }

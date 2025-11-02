@@ -25,7 +25,7 @@ class DefaultTrafficRepo implements TrafficRepo {
 				() -> {
 					try {
 						String query = """
-								INSERT INTO x_traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at)
+								INSERT INTO monitor.traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at)
 								VALUES (:id, :healthId, :method, :path, :code, :elapsed, :headers, :request, :response, current_timestamp)
 								""";
 

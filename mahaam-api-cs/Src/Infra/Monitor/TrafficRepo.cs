@@ -18,7 +18,7 @@ public class TrafficRepo(IDB db, ILog log) : ITrafficRepo
 		{
 			try
 			{
-				var query = @"INSERT INTO x_traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at)
+				var query = @"INSERT INTO monitor.traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at)
 					VALUES(@Id, @HealthId, @Method, @Path, @Code, @Elapsed, @Headers, @Request, @Response, current_timestamp)";
 				using var scope = new TransactionScope(TransactionScopeOption.Suppress);
 				_db.Insert(query, traffic);

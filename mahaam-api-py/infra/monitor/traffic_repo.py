@@ -28,7 +28,7 @@ class DefaultTrafficRepo(metaclass=ProtocolEnforcer, protocol=TrafficRepo):
                 }
 
                 sql = """
-                    INSERT INTO x_traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at) 
+                    INSERT INTO monitor.traffic (id, health_id, method, path, code, elapsed, headers, request, response, created_at) 
                     VALUES(:id, :health_id, :method, :path, :code, :elapsed, :headers, :request, :response, current_timestamp)"""
 
                 db.DB.insert(sql, traffic_data)

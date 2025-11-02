@@ -1,18 +1,18 @@
-DROP TABLE IF EXISTS tasks;
-DROP TABLE IF EXISTS plan_members;
-DROP TABLE IF EXISTS suggested_emails;
-DROP TABLE IF EXISTS devices;
-DROP TABLE IF EXISTS plans;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS app.tasks;
+DROP TABLE IF EXISTS app.plan_members;
+DROP TABLE IF EXISTS app.suggested_emails;
+DROP TABLE IF EXISTS app.devices;
+DROP TABLE IF EXISTS app.plans;
+DROP TABLE IF EXISTS app.users;
 --
-DROP TABLE IF EXISTS x_health;
-DROP TABLE IF EXISTS x_log;
-DROP TABLE IF EXISTS x_traffic;
+DROP TABLE IF EXISTS monitor.health;
+DROP TABLE IF EXISTS monitor.log;
+DROP TABLE IF EXISTS monitor.traffic;
 --
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 --
 
-CREATE TABLE users (
+CREATE TABLE app.users (
 	id uuid NOT NULL DEFAULT uuid_generate_v4 (),
 	email varchar(255) NULL,
 	name varchar(50) NULL,
@@ -20,10 +20,10 @@ CREATE TABLE users (
 	updated_at timestamptz NULL,
 	CONSTRAINT users_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX users_unique_index_email ON users (email);
+CREATE UNIQUE INDEX users_unique_index_email ON app.users (email);
 --
 
-CREATE TABLE devices (
+CREATE TABLE app.devices (
 	id uuid NOT NULL,
 	user_id uuid NOT NULL,
 	platform TEXT NULL,
@@ -32,22 +32,22 @@ CREATE TABLE devices (
 	created_at timestamptz NOT NULL,
 	updated_at timestamptz NULL,
 	CONSTRAINT devices_pkey PRIMARY KEY (id),
-	CONSTRAINT devices_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+	CONSTRAINT devices_user_id_fkey FOREIGN KEY (user_id) REFERENCES app.users (id) ON DELETE CASCADE
 );
 --
 
-CREATE TABLE suggested_emails (
+CREATE TABLE app.suggested_emails (
 	id uuid NOT NULL,
 	user_id uuid NOT NULL,
 	email varchar(255) NULL,
 	created_at timestamptz NOT NULL,
 	CONSTRAINT suggested_emails_pkey PRIMARY KEY (id),
-	CONSTRAINT suggested_emails_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+	CONSTRAINT suggested_emails_user_id_fkey FOREIGN KEY (user_id) REFERENCES app.users (id) ON DELETE CASCADE
 );
-CREATE UNIQUE INDEX suggested_emails_unique_index_user_id_email ON suggested_emails (user_id, email);
+CREATE UNIQUE INDEX suggested_emails_unique_index_user_id_email ON app.suggested_emails (user_id, email);
 --
 
-CREATE TABLE plans (
+CREATE TABLE app.plans (
 	id uuid NOT NULL DEFAULT uuid_generate_v4 (),
 	user_id uuid NOT NULL,
 	type VARCHAR(50) NOT NULL,
@@ -60,22 +60,22 @@ CREATE TABLE plans (
 	created_at timestamptz NOT NULL,
 	updated_at timestamptz NULL,
 	CONSTRAINT plans_pk PRIMARY KEY (id),
-	CONSTRAINT plans_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+	CONSTRAINT plans_user_id_fkey FOREIGN KEY (user_id) REFERENCES app.users (id) ON DELETE CASCADE
 );
-CREATE INDEX plans_index_type ON plans (type);
+CREATE INDEX plans_index_type ON app.plans (type);
 --
 
-CREATE TABLE plan_members (
+CREATE TABLE app.plan_members (
 	plan_id uuid NOT NULL,
 	user_id uuid NOT NULL,
 	created_at timestamptz NOT NULL,
 	CONSTRAINT plan_members_pkey PRIMARY KEY (plan_id, user_id),
-	CONSTRAINT plan_members_plan_id_fkey FOREIGN KEY (plan_id) REFERENCES plans (id) ON DELETE CASCADE,
-	CONSTRAINT plan_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+	CONSTRAINT plan_members_plan_id_fkey FOREIGN KEY (plan_id) REFERENCES app.plans (id) ON DELETE CASCADE,
+	CONSTRAINT plan_members_user_id_fkey FOREIGN KEY (user_id) REFERENCES app.users (id) ON DELETE CASCADE
 );
 --
 
-CREATE TABLE tasks (
+CREATE TABLE app.tasks (
 	id uuid NOT NULL DEFAULT uuid_generate_v4 (),
 	plan_id uuid NOT NULL,
 	title varchar(255) NOT NULL,
@@ -84,22 +84,22 @@ CREATE TABLE tasks (
 	created_at timestamptz NOT NULL,
 	updated_at timestamptz NULL,
 	CONSTRAINT tasks_pkey PRIMARY KEY (id),
-	CONSTRAINT tasks_fkey FOREIGN KEY (plan_id) REFERENCES plans (id) ON DELETE CASCADE
+	CONSTRAINT tasks_fkey FOREIGN KEY (plan_id) REFERENCES app.plans (id) ON DELETE CASCADE
 );
 --
 
-CREATE TABLE x_log (
+CREATE TABLE monitor.logs (
 	id uuid NOT NULL DEFAULT uuid_generate_v4 (),
 	traffic_id uuid NULL,
 	"type" varchar(50) NULL,
 	message text NOT NULL,
 	node_ip varchar(20) NOT NULL,
 	created_at timestamptz NOT NULL,
-	CONSTRAINT x_log_pkey PRIMARY KEY (id)
+	CONSTRAINT logs_pkey PRIMARY KEY (id)
 );
 --
 
-CREATE TABLE x_health (
+CREATE TABLE monitor.health (
 	id uuid NOT NULL DEFAULT uuid_generate_v4 (),
 	api_name varchar(50) NOT NULL,
 	api_version varchar(20) NOT NULL,
@@ -109,11 +109,11 @@ CREATE TABLE x_health (
 	started_at timestamptz NOT NULL,
 	pulsed_at timestamptz NULL,
 	stopped_at timestamptz NULL,
-	CONSTRAINT x_health_pkey PRIMARY KEY (id)
+	CONSTRAINT health_pkey PRIMARY KEY (id)
 );
 --
 
-CREATE TABLE x_traffic (
+CREATE TABLE monitor.traffic (
 	id uuid NOT NULL DEFAULT uuid_generate_v4 (),
 	health_id uuid NOT NULL,
 	method varchar(20) NOT NULL,
@@ -124,5 +124,5 @@ CREATE TABLE x_traffic (
 	request text NULL,
 	response text NULL,
 	created_at timestamptz NOT NULL,
-	CONSTRAINT x_traffic_pkey PRIMARY KEY (id)
+	CONSTRAINT traffic_pkey PRIMARY KEY (id)
 );

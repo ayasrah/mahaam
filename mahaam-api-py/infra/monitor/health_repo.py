@@ -24,15 +24,15 @@ class DefaultHealthRepo(metaclass=ProtocolEnforcer, protocol=HealthRepo):
         }
 
         sql = """
-            INSERT INTO x_health (id, api_name, api_version, env_name, node_ip, node_name, started_at) 
+            INSERT INTO monitor.health (id, api_name, api_version, env_name, node_ip, node_name, started_at) 
             VALUES(:id, :api_name, :api_version, :env_name, :node_ip, :node_name, current_timestamp)"""
 
         return db.DB.insert(sql, health_data)
 
     def update_pulse(self, id: uuid.UUID) -> int:
-        sql = "UPDATE x_health SET pulsed_at = current_timestamp WHERE id = :id"
+        sql = "UPDATE monitor.health SET pulsed_at = current_timestamp WHERE id = :id"
         return db.DB.update(sql, {"id": str(id)})
 
     def update_stopped(self, id: uuid.UUID) -> int:
-        sql = "UPDATE x_health SET stopped_at = current_timestamp WHERE id = :id"
+        sql = "UPDATE monitor.health SET stopped_at = current_timestamp WHERE id = :id"
         return db.DB.update(sql, {"id": str(id)})

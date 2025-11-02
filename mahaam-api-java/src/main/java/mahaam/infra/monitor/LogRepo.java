@@ -29,7 +29,7 @@ class DefaultLogRepo implements LogRepo {
 				() -> {
 					try {
 						String query = """
-								INSERT INTO x_log (traffic_id, type, message, node_ip, created_at)
+								INSERT INTO monitor.logs (traffic_id, type, message, node_ip, created_at)
 								VALUES (:trafficId, :type, :message, :node_ip, current_timestamp)
 								""";
 

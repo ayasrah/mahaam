@@ -21,7 +21,7 @@ func NewLogRepo(db *AppDB) LogRepo {
 
 func (r *logRepo) Create(trafficId uuid.UUID, logType, message string) {
 	query := `
-		INSERT INTO x_log (traffic_id, type, message, node_ip, created_at)
+		INSERT INTO monitor.logs (traffic_id, type, message, node_ip, created_at)
 		VALUES (:traffic_id, :type, :message, :node_ip, current_timestamp)`
 
 	params := Param{
