@@ -33,7 +33,7 @@ def init(app_instance: App):
     cache.init(health)
     
     # Log startup message
-    start_msg = f"✓ {cache.api_name}-v{cache.api_version}/{cache.node_ip}-{cache.node_name} started with healthID={cache.health_id}"
+    start_msg = f"✓ {configs.data.apiName}-v{configs.data.apiVersion}/{cache.node_ip}-{cache.node_name} started with healthID={cache.health_id}"
     Log.info(start_msg)
     time.sleep(2)
     app_instance.health_service.start_sending_pulses()

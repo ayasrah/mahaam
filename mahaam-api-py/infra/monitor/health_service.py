@@ -2,7 +2,7 @@ import threading
 import time
 from typing import Protocol
 from infra.log import Log
-from infra import cache
+from infra import cache, configs
 from infra.validation import ProtocolEnforcer
 from infra.monitor.health_repo import HealthRepo
 from infra.monitor.monitor_models import Health
@@ -40,7 +40,7 @@ class DefaultHealthService(metaclass=ProtocolEnforcer, protocol=HealthService):
             try:
                 if cache.health_id:
                     self.health_repo.update_stopped(cache.health_id)
-                    stop_msg = f"✓ {cache.api_name}-v{cache.api_version}/{cache.node_ip}-{cache.node_name} stopped with healthID={cache.health_id}"
+                    stop_msg = f"✓ {configs.data.apiName}-v{configs.data.apiVersion}/{cache.node_ip}-{cache.node_name} stopped with healthID={cache.health_id}"
                     Log.info(stop_msg)
             except Exception as e:
                 Log.error(str(e))
