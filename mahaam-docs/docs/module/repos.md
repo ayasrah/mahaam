@@ -38,7 +38,7 @@ Mahaam chose the second option, which is Micro/Lightweight ORM libraries like Da
 - Plan Module: `PlanRepo`, `PlanMembersRepo` for `plans`, `plan_members` tables.
 - Task Module: `TaskRepo` for `tasks` table.
 - User Module: `UserRepo`, `DeviceRepo`, `SuggestedEmailsRepo` for `users`, `devices`, `suggested_emails` tables.
-- Monitor Module: `HealthRepo`, `TrafficRepo`, `LogRepo` for `x_health`, `x_traffic`, `x_log` tables.
+- Monitor Module: `HealthRepo`, `TrafficRepo`, `LogRepo` for `health`, `traffic`, `logs` tables.
 
 ### Sample
 

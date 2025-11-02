@@ -35,21 +35,21 @@ Monitoring tracks app health and performance in real-time.
 **Traffic**
 
 ```sql
-x_traffic (id, user_id, device_id, code, elapsed, method, path,
+traffic (id, user_id, device_id, code, elapsed, method, path,
           payload, response, app_version, app_store, ip, created_at)
 ```
 
 **Health**
 
 ```sql
-x_health (id, node_ip, node_name, app_name, app_version, created_at,
+health (id, node_ip, node_name, app_name, app_version, created_at,
           updated_at, stopped)
 ```
 
 **Logs**
 
 ```sql
-x_log (traffic_id, type, message, ip, created_at)
+logs (traffic_id, type, message, ip, created_at)
 ```
 
 #### Implementation
@@ -61,7 +61,7 @@ x_log (traffic_id, type, message, ip, created_at)
 
 #### Benefits
 
-- Track app performance
-- Monitor user activity
+- Observe all events done
 - Debug issues quickly
+- Track app performance
 - Ensure app availability
