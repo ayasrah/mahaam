@@ -19,18 +19,6 @@ export class Cache {
     return this._health?.nodeName ?? '';
   }
 
-  public static getApiName(): string {
-    return this._health?.apiName ?? '';
-  }
-
-  public static getApiVersion(): string {
-    return this._health?.apiVersion ?? '';
-  }
-
-  public static getEnvName(): string {
-    return this._health?.envName ?? 'development';
-  }
-
   public static getHealthId(): string {
     return this._health?.id ?? '';
   }
