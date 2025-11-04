@@ -1,10 +1,10 @@
 # Monitoring
 
-#### Overview
+### Overview
 
 Monitoring tracks app health and performance in real-time.
 
-#### Components
+### Components
 
 **Health Check**
 
@@ -30,7 +30,7 @@ Monitoring tracks app health and performance in real-time.
 - Sends periodic pulses to track uptime
 - Stores node IP, name, app details
 
-#### Data Models
+### Data Models
 
 **Traffic**
 
@@ -52,20 +52,20 @@ health (id, node_ip, node_name, app_name, app_version, created_at,
 logs (traffic_id, type, message, ip, created_at)
 ```
 
-#### Implementation
+### Implementation
 
 - **Async logging**: Traffic and logs saved asynchronously
 - **Error handling**: Failed monitoring doesn't break main flow
 - **Performance**: Non-blocking operations
 - **Privacy**: Sensitive data filtered out
 
-#### Benefits
+### Benefits
 
 - Observe all events done
 - Debug issues quickly
 - Track app performance
 - Ensure app availability
 
-#### See
+### See
 
 - Monitor module in: [C#](https://github.com/ayasrah/mahaam/tree/main/mahaam-api-cs/Src/Infra/Monitor), [Java](https://github.com/ayasrah/mahaam/tree/main/mahaam-api-java/src/main/java/mahaam/infra/monitor), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/monitor), [Python](https://github.com/ayasrah/mahaam/tree/main/mahaam-api-py/infra/monitor)
