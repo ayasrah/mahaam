@@ -156,3 +156,7 @@ def init(health: Health):
 ```
 
 :::
+
+### See
+
+- Cache implementation in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Infra/Cache.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/infra/Cache.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/utils/cache/cache.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/cache.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/infra/cache.py)

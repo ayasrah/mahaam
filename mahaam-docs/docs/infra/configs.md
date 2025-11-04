@@ -128,3 +128,7 @@ uvicorn.run(app, host="0.0.0.0", port=configs.data.httpPort)
 ```
 
 :::
+
+### See
+
+- Configuration implementation in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Infra/Settings.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/infra/Config.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/utils/conf/env.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/config.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/infra/configs.py)

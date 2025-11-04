@@ -107,3 +107,7 @@ class Plan:
 ```
 
 :::
+
+### See
+
+- Plan model in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Feat/Plan/Plan.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/feat/plan/PlanModel.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/app/models/plan.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/feat/plans/plans.model.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/feat/plan/plan_model.py)

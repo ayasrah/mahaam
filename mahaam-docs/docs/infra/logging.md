@@ -72,3 +72,7 @@ Mahaam uses only two levels, **INFO** and **ERROR**.
   - Rotate log files (daily, size-based)
   - Compress or archive old logs
   - Delete expired logs (to save space)
+
+### See
+
+- Logging implementation in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Infra/Monitor/Log.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/infra/Log.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/utils/log/logs.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/log.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/infra/log.py)

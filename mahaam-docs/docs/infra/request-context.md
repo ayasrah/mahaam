@@ -213,3 +213,7 @@ public void LogUserAction(string action)
 ```
 
 Request context params are stored in traffic table, headers column.
+
+### See
+
+- Request context implementation in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Infra/Req.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/infra/Req.java), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/req.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/infra/req.py)

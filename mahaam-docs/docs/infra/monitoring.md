@@ -65,3 +65,7 @@ logs (traffic_id, type, message, ip, created_at)
 - Debug issues quickly
 - Track app performance
 - Ensure app availability
+
+#### See
+
+- Monitor module in: [C#](https://github.com/ayasrah/mahaam/tree/main/mahaam-api-cs/Src/Infra/Monitor), [Java](https://github.com/ayasrah/mahaam/tree/main/mahaam-api-java/src/main/java/mahaam/infra/monitor), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/monitor), [Python](https://github.com/ayasrah/mahaam/tree/main/mahaam-api-py/infra/monitor)

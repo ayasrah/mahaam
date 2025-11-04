@@ -85,3 +85,7 @@ head -c 64 /dev/urandom | base64
 ```
 
 :::
+
+### See
+
+- Security implementation in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Infra/Security.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/infra/Security.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/utils/token/token.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/auth.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/infra/security.py)

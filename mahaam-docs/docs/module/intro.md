@@ -16,7 +16,7 @@ This section discusses module internal parts.
 
 This is the vertical slice that a module cosists of:
 
-- Controller: Module APIs.
-- Service: Module business logic.
-- Repos: Database access classes.
+- Controllers: Module APIs.
+- Services: Module business logic.
+- Repos: Database access layer.
 - Models: Data models and DTOs.

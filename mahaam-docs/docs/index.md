@@ -6,11 +6,11 @@ Mahaam is a proof-of-concept (POC) todo app for different technologies and frame
 
 This documentation outlines these concepts at a high level:
 
-1. **Service Setup**: Service creation.
-2. **Service Design**: Functionality, data model, api design, and maintainability.
-3. **Service Module**: Controllers, services, models and repositories.
-4. **Service Infra**: Service utilities.
-5. **Service Testing**: Integration tests.
+1. [Service Setup](https://mahaam.dev/setup/creation): Service creation.
+2. [Service Design](https://mahaam.dev/design/intro): Functionality, data model, api design, and maintainability.
+3. [Service Module](https://mahaam.dev/module/intro): Controllers, services, models and repositories.
+4. [Service Infra](https://mahaam.dev/infra/intro): Service utilities.
+5. [Service Testing](https://mahaam.dev/test/test): Integration tests.
 
 ### Purpose
 

@@ -179,8 +179,13 @@ def select_many(self, plan_id: UUID, conn=None) -> list[Task]:
 
 #### TypeScript Note
 
-Following code seems to have sql injction problem, as parameter seem to be directly substituted in the query, but that is not the case as the **postgres** library does handle them properly.
+Following code seems to have sql injction problem, as parameter seem to be directly substituted in the query, but that is not the case as the **postgres** library detect and handle string interpolation properly.
 
 ```TypeScript
 await trx`SELECT * FROM tasks WHERE plan_id = ${planId}`;
 ```
+
+#### See
+
+- TaskRepo in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Feat/Task/TaskRepo.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/feat/task/TaskRepo.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/app/repo/task.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/feat/tasks/tasks.repo.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/feat/task/task_repo.py)
+- Database Schema: [DDL](https://github.com/ayasrah/mahaam/blob/main/mahaam-data/mahaam_ddl.sql), [ERD](https://github.com/ayasrah/mahaam/blob/main/mahaam-data/mahaam_erd.png)

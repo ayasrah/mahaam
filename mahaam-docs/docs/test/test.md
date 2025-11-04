@@ -67,3 +67,7 @@ pm.test(pm.info.requestName, function () {
   pm.expect(pm.response.code).to.eq(200);
 });
 ```
+
+#### See
+
+- Mahaam test [files](https://github.com/ayasrah/mahaam/tree/main/mahaam-api-test)

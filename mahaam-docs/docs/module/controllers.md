@@ -62,16 +62,16 @@ public interface PlanController {
 
 ```Go
 type PlanHandler interface {
-    Create(c *ginC)
-    Update(c *ginC)
-    Delete(c *ginC)
-    Share(c *ginC)
-    Unshare(c *ginC)
-    Leave(c *ginC)
-    UpdateType(c *ginC)
-    ReOrder(c *ginC)
-    GetOne(c *ginC)
-    GetMany(c *ginC)
+    Create(c *gin.Context)
+    Update(c *gin.Context)
+    Delete(c *gin.Context)
+    Share(c *gin.Context)
+    Unshare(c *gin.Context)
+    Leave(c *gin.Context)
+    UpdateType(c *gin.Context)
+    ReOrder(c *gin.Context)
+    GetOne(c *gin.Context)
+    GetMany(c *gin.Context)
 }
 ```
 
@@ -152,7 +152,7 @@ func NewPlanHandler(service service.PlanService) PlanHandler {
     return &planHandler{planService: service}
 }
 
-func (h *planHandler) GetOne(c *ginC) {
+func (h *planHandler) GetOne(c *gin.Context) {
     id := req.PathUuid(c, "planId")
     plan := h.planService.GetOne(id)
     c.JSON(OK, plan)
@@ -191,22 +191,27 @@ class DefaultPlanRouter(metaclass=ProtocolEnforcer, protocol=PlanRouter):
 
 #### Http Methods
 
-- GET: get resource
-- POST: Create resource
-- PUT: Replace resource
-- PATCH: Update resource partially
-- DELETE: Delete resource
+- `GET`: get resource
+- `POST`: Create resource
+- `PUT`: Replace resource
+- `PATCH`: Update resource partially
+- `DELETE`: Delete resource
 
 #### Http status codes
 
 Mahaam uses status codes as follows:
 
-- 200: OK, **success** GET, PATCH, PUT
-- 201: Created, **success** POST
-- 204: NoContent, **success** DELETE
-- 400: BadRequest, **failed** in input, GET, POST, PATCH, PUT, DELETE
-- 401: Unauthorized, **failed** in identity, GET, POST, PATCH, PUT, DELETE
-- 403: Forbidden, **failed** in role, GET, POST, PATCH, PUT, DELETE
-- 404: NotFound, **failed** in resource, GET, POST, PATCH, PUT, DELETE
-- 409: Conflict, **failed** in logic, GET, POST, PATCH, PUT, DELETE
-- 500: ServerError, **failed** in server, GET, POST, PATCH, PUT, DELETE
+- **`200`**: OK, **success** `GET, PATCH, PUT`
+- **`201`**: Created, **success** `POST`
+- **`204`**: NoContent, **success** `DELETE`
+- **`400`**: BadRequest, **failed** in input, `GET, POST, PATCH, PUT, DELETE`
+- **`401`**: Unauthorized, **failed** in identity, `GET, POST, PATCH, PUT, DELETE`
+- **`403`**: Forbidden, **failed** in role, `GET, POST, PATCH, PUT, DELETE`
+- **`404`**: NotFound, **failed** in resource, `GET, POST, PATCH, PUT, DELETE`
+- **`409`**: Conflict, **failed** in logic, `GET, POST, PATCH, PUT, DELETE`
+- **`500`**: ServerError, **failed** in server, `GET, POST, PATCH, PUT, DELETE`
+
+#### See
+
+- PlanController in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Feat/Plan/PlanController.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/feat/plan/PlanController.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/app/handler/plan.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/feat/plans/plans.controller.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/feat/plan/plan_router.py)
+- The `Rule` [Validation Docs](https://mahaam.dev/infra/validations)

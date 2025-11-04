@@ -310,3 +310,9 @@ From the official [Go blog on defer, panic, and recover](https://go.dev/blog/def
 > For a real-world example of panic and recover, see the json package from the Go standard library. It encodes an interface with a set of recursive functions. If an error occurs when traversing the value, panic is called to unwind the stack to the top-level function call, which recovers from the panic and returns an appropriate error value...
 
 This principle is applied similarly in Mahaam’s Go codebase, panics are used internally and recovered at the top level to transform them into structured error responses to the caller.
+
+### See
+
+- Exception middleware in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Infra/Middleware.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/infra/Filters.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/utils/middleware/recovery.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/middleware.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/infra/middlewares.py)
+
+- Exception Types in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Infra/Exceptions.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/infra/Exceptions.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/app/models/error.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/errors.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/infra/exceptions.py)

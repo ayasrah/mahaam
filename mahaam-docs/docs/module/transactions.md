@@ -124,3 +124,7 @@ def create(self, plan_id: UUID, title: str) -> UUID:
 ```
 
 :::
+
+### See
+
+- Transaction management in TaskService in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Feat/Task/TaskService.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/feat/task/TaskService.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/app/service/task.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/feat/tasks/tasks.service.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/feat/task/task_service.py)

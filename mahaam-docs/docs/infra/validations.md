@@ -44,3 +44,7 @@ Rule.contains(PlanType.All, type)
 - Controllers: Validate required inputs and types.
 - Service: Validate business rules.
 - Middlewares: Validate security and authorization rules.
+
+### See
+
+- Validation implementation in: [C#](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-cs/Src/Infra/Validator.cs), [Java](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-java/src/main/java/mahaam/infra/Rule.java), [Go](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-go/app/handler/utils.go), [TypeScript](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-ts/src/infra/rule.ts), [Python](https://github.com/ayasrah/mahaam/blob/main/mahaam-api-py/infra/validation.py)
