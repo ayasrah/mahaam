@@ -1,14 +1,14 @@
 # Transaction Management
 
-#### Overview
+### Overview
 
 Transaction management is treating a set of db operations as a single unit, **all succeed or none**.
 
-#### Purpose
+### Purpose
 
 To ensure data consistency.
 
-#### Management Steps
+### Management Steps
 
 - If all operation succeed, commit is done.
 - If any operation fails, rollback is done.
@@ -17,7 +17,7 @@ To ensure data consistency.
 - In Go, Javascript, and Python, commit and rollback are done manually: `transaction.begin`,`transaction.commit` or `transaction.rollback`.
 - Log and traffic repos are execluded from transactions (`suppressed`), so audits are created to db even the transaction is rolled back for that request. Its recommeded to place the log at the end of the method, eg: after `scope.Complete();` to make sure transaction is completed.
 
-#### Mahaam Code
+### Mahaam Code
 
 Mahaam implements transaction management in the service layer across all language versions:
 

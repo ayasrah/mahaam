@@ -1,31 +1,31 @@
 # Configs
 
-#### Overview
+### Overview
 
 Configs are the settings that control the app.
 
-#### Stored In
+### Stored In
 
 - OS Environment variables
 - Vaults
 - .env files
 - JSON files
 
-#### Purpose
+### Purpose
 
 - Maintainability: Decouple code from configs.
 - Flexibility: Run same code on different environments.
 - Scalability: Update configs without changing code.
 - Security: Sensitive data should not be hard coded.
 
-#### Sample
+### Sample
 
 - Environment (prod, dev, staging)
 - Database url,
 - log format,
 - external service url
 
-#### Store
+### Store
 
 ```env
 appName=mahaam-api
@@ -34,7 +34,7 @@ dbUrl=db-url-here
 httpPort=7023
 ```
 
-#### Model
+### Model
 
 App should load configs on startup, and either keeps watching the file for changes (recommended) or restart after change.
 
@@ -90,7 +90,7 @@ class Config(BaseModel):
 
 :::
 
-#### Usage
+### Usage
 
 Mahaam expose configs through single utility as follows
 ::: code-group
