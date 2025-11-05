@@ -3,7 +3,8 @@ import os
 import time
 import uuid
 import re
-from infra import cache, email, configs
+from infra.cache import Cache
+from infra import email, configs
 from infra.log import Log
 from infra.db import DB
 from infra.monitor.monitor_models import Health
@@ -30,10 +31,10 @@ def init(app_instance: App):
     
     # Initialize health service and cache
     app_instance.health_service.server_started(health)
-    cache.init(health)
+    Cache.init(health)
     
     # Log startup message
-    start_msg = f"✓ {configs.data.apiName}-v{configs.data.apiVersion}/{cache.node_ip}-{cache.node_name} started with healthID={cache.health_id}"
+    start_msg = f"✓ {configs.data.apiName}-v{configs.data.apiVersion}/{Cache.node_ip()}-{Cache.node_name()} started with healthID={Cache.health_id()}"
     Log.info(start_msg)
     time.sleep(2)
     app_instance.health_service.start_sending_pulses()

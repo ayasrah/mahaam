@@ -1,6 +1,7 @@
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from infra import cache, db
+from infra.cache import Cache
+from infra import db
 from typing import Protocol
 from infra.validation import ProtocolEnforcer
 
@@ -15,7 +16,7 @@ class DefaultLogRepo(metaclass=ProtocolEnforcer, protocol=LogRepo):
                     "trafficId": str(traffic_id) if traffic_id else None,
                     "type": type,
                     "message": message,
-                    "node_ip": cache.node_ip,
+                    "node_ip": Cache.node_ip(),
                 }
 
                 sql = """

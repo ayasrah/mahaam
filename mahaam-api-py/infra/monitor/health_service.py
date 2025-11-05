@@ -2,7 +2,8 @@ import threading
 import time
 from typing import Protocol
 from infra.log import Log
-from infra import cache, configs
+from infra.cache import Cache
+from infra import configs
 from infra.validation import ProtocolEnforcer
 from infra.monitor.health_repo import HealthRepo
 from infra.monitor.monitor_models import Health
@@ -27,8 +28,8 @@ class DefaultHealthService(metaclass=ProtocolEnforcer, protocol=HealthService):
         def pulse_loop():
             while not DefaultHealthService.pulse_stop_event.is_set():
                 try:
-                    if cache.health_id:
-                        self.health_repo.update_pulse(cache.health_id)
+                    if Cache.health_id():
+                        self.health_repo.update_pulse(Cache.health_id())
                     time.sleep(60)  # 1 minute
                 except Exception as e:
                     Log.error(str(e))
@@ -38,9 +39,9 @@ class DefaultHealthService(metaclass=ProtocolEnforcer, protocol=HealthService):
     def server_stopped(self) -> None:
         def stop_thread():
             try:
-                if cache.health_id:
-                    self.health_repo.update_stopped(cache.health_id)
-                    stop_msg = f"✓ {configs.data.apiName}-v{configs.data.apiVersion}/{cache.node_ip}-{cache.node_name} stopped with healthID={cache.health_id}"
+                if Cache.health_id():
+                    self.health_repo.update_stopped(Cache.health_id())
+                    stop_msg = f"✓ {configs.data.apiName}-v{configs.data.apiVersion}/{Cache.node_ip()}-{Cache.node_name()} stopped with healthID={Cache.health_id()}"
                     Log.info(stop_msg)
             except Exception as e:
                 Log.error(str(e))

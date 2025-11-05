@@ -6,7 +6,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp
 
 import json
-from infra import log, cache, http, configs
+from infra.cache import Cache
+from infra import log, http, configs
 from infra.factory import App
 from infra.monitor.monitor_models import Traffic, TrafficHeaders
 from infra.security import Auth
@@ -79,7 +80,7 @@ def create_traffic(traffic_id: uuid.UUID, request: Request, path: str,
 		
 		traffic = Traffic(
 			id=traffic_id,
-			health_id=cache.health_id,
+			health_id=Cache.health_id(),
 			method=request.method,
 			path=path,
 			code=response_status,

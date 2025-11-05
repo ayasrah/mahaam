@@ -1,14 +1,21 @@
 from infra.monitor.monitor_models import Health
 from uuid import UUID
 
-# Simple module-level variables like Go implementation
-node_ip = ""
-node_name = ""
-health_id = UUID(int=0)
+class Cache:
+    _health: Health | None = None
 
-def init(health: Health):
-    """Initialize cache with health object"""
-    global node_ip, node_name, health_id
-    node_ip = health.node_ip
-    node_name = health.node_name
-    health_id = health.id
+    @classmethod
+    def init(cls, health: Health) -> None:
+        cls._health = health
+
+    @classmethod
+    def node_ip(cls) -> str:
+        return cls._health.node_ip if cls._health else ""
+
+    @classmethod
+    def node_name(cls) -> str:
+        return cls._health.node_name if cls._health else ""
+
+    @classmethod
+    def health_id(cls) -> UUID:
+        return cls._health.id if cls._health else UUID(int=0)

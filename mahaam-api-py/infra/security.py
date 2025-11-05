@@ -75,7 +75,6 @@ class DefaultAuthService(metaclass=ProtocolEnforcer, protocol=AuthService):
 			raise UnauthorizedException(f"{name} is not a valid UUID")
 
 
-# Keep the original Auth class for backward compatibility
 class Auth:
 	@staticmethod
 	def validate_and_extract_jwt(request: Request) -> Tuple[uuid.UUID, uuid.UUID]:
