@@ -15,9 +15,6 @@ public interface IAuth
 
 public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo, Settings settings) : IAuth
 {
-	private readonly IDeviceRepo _deviceRepo = deviceRepo;
-	private readonly IUserRepo _userRepo = userRepo;
-	private readonly Settings _settings = settings;
 	public (Guid, Guid, bool) ValidateAndExtractJwt(HttpContext context)
 	{
 		string? authorization = context.Request.Headers.Authorization;
@@ -34,11 +31,11 @@ public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo, Settings settings)
 		var userId = GetGuidClaim(token, "userId");
 		var deviceId = GetGuidClaim(token, "deviceId");
 
-		var device = _deviceRepo.GetOne(deviceId).GetAwaiter().GetResult();
+		var device = deviceRepo.GetOne(deviceId).GetAwaiter().GetResult();
 		if ((device is null || userId != device.UserId) && !context.Request.Path.Equals("/user/logout"))
 			throw new UnauthorizedException($"Invalid user info");
 
-		var user = _userRepo.GetOne(userId).GetAwaiter().GetResult();
+		var user = userRepo.GetOne(userId).GetAwaiter().GetResult();
 		var isLoggedIn = user is not null && user.Email is not null;
 		return (userId, deviceId, isLoggedIn);
 	}
@@ -107,9 +104,9 @@ public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo, Settings settings)
 	{
 		return new TokenValidationParameters()
 		{
-			ValidateLifetime = true, // Because there is no expiration in the generated token
-			ValidateAudience = false, // Because there is no audiance in the generated token
-			ValidateIssuer = true,   // Because there is no issuer in the generated token
+			ValidateLifetime = true,
+			ValidateAudience = false,
+			ValidateIssuer = true,
 			ValidIssuer = "mahaam-api",
 			IssuerSigningKey = SecurityKey()
 		};
@@ -118,7 +115,7 @@ public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo, Settings settings)
 
 	private SymmetricSecurityKey SecurityKey()
 	{
-		var keyBytes = Encoding.ASCII.GetBytes(_settings.Api.TokenSecretKey);
+		var keyBytes = Encoding.ASCII.GetBytes(settings.Api.TokenSecretKey);
 		return new SymmetricSecurityKey(keyBytes);
 	}
 }

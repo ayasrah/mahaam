@@ -15,18 +15,17 @@ public interface IPlanMembersRepo
 
 public class PlanMembersRepo(IDB db) : IPlanMembersRepo
 {
-	private readonly IDB _db = db;
 	public async Task Create(Guid planId, Guid userId)
 	{
 		var query = @"INSERT INTO plan_members(plan_id, user_id, created_at) 
 			VALUES(@planId, @userId, current_timestamp)";
-		await _db.Insert(query, new { planId, userId });
+		await db.Insert(query, new { planId, userId });
 	}
 
 	public async Task<int> Delete(Guid planId, Guid userId)
 	{
 		var query = @"DELETE FROM plan_members WHERE plan_id = @planId AND user_id = @userId";
-		return await _db.Delete(query, new { planId, userId });
+		return await db.Delete(query, new { planId, userId });
 	}
 
 
@@ -44,7 +43,7 @@ public class PlanMembersRepo(IDB db) : IPlanMembersRepo
 			WHERE cm.user_id = @userId
 			ORDER BY c.created_at DESC";
 
-		return await _db.SelectMany<Plan, User, Plan>(query, (plan, user) =>
+		return await db.SelectMany<Plan, User, Plan>(query, (plan, user) =>
 		{
 			plan.User = user;
 			plan.IsShared = true;
@@ -62,7 +61,7 @@ public class PlanMembersRepo(IDB db) : IPlanMembersRepo
 			LEFT JOIN users u ON cm.user_id = u.id
 			WHERE cm.plan_id = @planId
 			ORDER BY u.created_at DESC";
-		return await _db.SelectMany<User>(query, new { planId });
+		return await db.SelectMany<User>(query, new { planId });
 	}
 
 	/// <summary>
@@ -73,7 +72,7 @@ public class PlanMembersRepo(IDB db) : IPlanMembersRepo
 		var query = @"SELECT COUNT(1) FROM plan_members cm
 			LEFT JOIN plans c ON cm.plan_id = c.id
 			WHERE c.user_id = @userId";
-		return await _db.SelectOne<int>(query, new { userId });
+		return await db.SelectOne<int>(query, new { userId });
 	}
 
 	/// <summary>
@@ -82,6 +81,6 @@ public class PlanMembersRepo(IDB db) : IPlanMembersRepo
 	public async Task<int> GetUsersCount(Guid planId)
 	{
 		var query = "SELECT COUNT(1) FROM plan_members WHERE plan_id = @planId";
-		return await _db.SelectOne<int>(query, new { planId });
+		return await db.SelectOne<int>(query, new { planId });
 	}
 }

@@ -10,8 +10,6 @@ public interface ILogRepo
 
 public class LogRepo(IDB db, ICache cache) : ILogRepo
 {
-	private readonly IDB _db = db;
-	private readonly ICache _cache = cache;
 	public void Create(string type, string message, Guid? trafficId)
 	{
 		var err = new
@@ -19,7 +17,7 @@ public class LogRepo(IDB db, ICache cache) : ILogRepo
 			trafficId,
 			type,
 			message,
-			node_ip = _cache.NodeIP(),
+			node_ip = cache.NodeIP(),
 		};
 		var query = @"INSERT INTO monitor.logs (traffic_id, type, message, node_ip, created_at) 
 			VALUES (@trafficId, @type, @message, @node_ip, current_timestamp)";
@@ -29,7 +27,7 @@ public class LogRepo(IDB db, ICache cache) : ILogRepo
 				try
 				{
 					using var scope = new TransactionScope(TransactionScopeOption.Suppress);
-					_db.Insert(query, err);
+					db.Insert(query, err);
 				}
 				catch (Exception ex)
 				{

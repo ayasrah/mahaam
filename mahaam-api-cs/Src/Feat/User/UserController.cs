@@ -26,14 +26,13 @@ public interface IUserController
 [Route("users")]
 public class UserController(IUserService userService) : ControllerBase, IUserController
 {
-	private readonly IUserService _userService = userService;
 	[HttpPost]
 	[EnableRateLimiting("PerUserRateLimit")]
 	[Route("send-me-otp")]
 	public async Task<IActionResult> SendMeOtp([FromForm] string email)
 	{
 		Rule.ValidateEmail(email);
-		var verificationSid = await _userService.SendMeOtp(email);
+		var verificationSid = await userService.SendMeOtp(email);
 		return Ok(verificationSid);
 
 	}
@@ -55,7 +54,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 		Rule.FailIf(!isPhysicalDevice, "Device should be real not simulator");
 		var device = new Device { Platform = platform, Fingerprint = deviceFingerprint, Info = deviceInfo };
 
-		var createdUser = await _userService.Create(device);
+		var createdUser = await userService.Create(device);
 		return Ok(createdUser);
 	}
 
@@ -71,7 +70,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 		Rule.Required(sid, "sid");
 		Rule.Required(otp, "otp");
 
-		var verifiedUser = await _userService.VerifyOtp(email, sid, otp);
+		var verifiedUser = await userService.VerifyOtp(email, sid, otp);
 
 		return Ok(verifiedUser);
 	}
@@ -80,7 +79,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	[Route("refresh-token")]
 	public async Task<IActionResult> RefreshToken()
 	{
-		var verifiedUser = await _userService.RefreshToken();
+		var verifiedUser = await userService.RefreshToken();
 		return Ok(verifiedUser);
 	}
 
@@ -89,7 +88,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	public async Task<IActionResult> UpdateName([FromForm] string name)
 	{
 		Rule.Required(name, "name");
-		await _userService.UpdateName(name);
+		await userService.UpdateName(name);
 		return Ok();
 	}
 
@@ -98,7 +97,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	public async Task<IActionResult> Logout([FromForm] Guid deviceId)
 	{
 		Rule.Required(deviceId, "deviceId");
-		await _userService.Logout(deviceId);
+		await userService.Logout(deviceId);
 		return Ok();
 	}
 
@@ -108,7 +107,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	{
 		Rule.Required(sid, "sid");
 		Rule.Required(otp, "otp");
-		await _userService.Delete(sid, otp);
+		await userService.Delete(sid, otp);
 		return NoContent();
 	}
 
@@ -116,7 +115,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	[Route("devices")]
 	public async Task<IActionResult> GetDevices()
 	{
-		var devices = await _userService.GetDevices();
+		var devices = await userService.GetDevices();
 		return Ok(devices);
 	}
 
@@ -124,7 +123,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	[Route("suggested-emails")]
 	public async Task<IActionResult> GetSuggestedEmails()
 	{
-		var suggestedEmails = await _userService.GetSuggestedEmails();
+		var suggestedEmails = await userService.GetSuggestedEmails();
 		return Ok(suggestedEmails);
 	}
 
@@ -133,7 +132,7 @@ public class UserController(IUserService userService) : ControllerBase, IUserCon
 	public async Task<IActionResult> DeleteSuggestedEmail([FromForm] Guid suggestedEmailId)
 	{
 		Rule.Required(suggestedEmailId, "suggestedEmailId");
-		await _userService.DeleteSuggestedEmail(suggestedEmailId);
+		await userService.DeleteSuggestedEmail(suggestedEmailId);
 		return NoContent();
 	}
 }

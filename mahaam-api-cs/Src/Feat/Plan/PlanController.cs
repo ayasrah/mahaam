@@ -23,15 +23,13 @@ public interface IPlanController
 [Route("plans")]
 public class PlanController(IPlanService planService) : ControllerBase, IPlanController
 {
-	private readonly IPlanService _planService = planService;
 
 	[HttpPost]
 	[Consumes(MediaTypeNames.Application.Json)]
 	public async Task<IActionResult> Create([FromBody] PlanIn plan)
 	{
 		Rule.OneAtLeastRequired([plan.Title, plan.Starts, plan.Ends], "title or starts or ends is required");
-
-		var id = await _planService.Create(plan);
+		var id = await planService.Create(plan);
 		return Created($"/plans/{id}", id);
 	}
 
@@ -41,8 +39,7 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 	{
 		Rule.Required(plan.Id, "Id");
 		Rule.OneAtLeastRequired([plan.Title, plan.Starts, plan.Ends], "title or starts or ends is required");
-
-		await _planService.Update(plan);
+		await planService.Update(plan);
 		return Ok();
 	}
 
@@ -51,7 +48,7 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 	public async Task<IActionResult> Delete(Guid id)
 	{
 		Rule.Required(id, "id");
-		await _planService.Delete(id);
+		await planService.Delete(id);
 		return NoContent();
 	}
 
@@ -61,8 +58,7 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 	{
 		Rule.Required(id, "id");
 		Rule.Required(email, "email");
-
-		await _planService.Share(id, email);
+		await planService.Share(id, email);
 		return Ok();
 	}
 
@@ -72,8 +68,7 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 	{
 		Rule.Required(id, "id");
 		Rule.Required(email, "email");
-
-		await _planService.Unshare(id, email);
+		await planService.Unshare(id, email);
 		return Ok();
 	}
 
@@ -82,7 +77,7 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 	public async Task<IActionResult> Leave(Guid id)
 	{
 		Rule.Required(id, "id");
-		await _planService.Leave(id);
+		await planService.Leave(id);
 		return Ok();
 	}
 
@@ -93,8 +88,7 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 		Rule.Required(id, "id");
 		Rule.Required(type, "type");
 		Rule.In(type, PlanType.All);
-
-		await _planService.UpdateType(id, type);
+		await planService.UpdateType(id, type);
 		return Ok();
 	}
 
@@ -106,7 +100,7 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 		Rule.In(type, PlanType.All);
 		Rule.Required(oldOrder, "oldOrder");
 		Rule.Required(newOrder, "newOrder");
-		await _planService.ReOrder(type, oldOrder, newOrder);
+		await planService.ReOrder(type, oldOrder, newOrder);
 		return Ok();
 	}
 
@@ -116,7 +110,7 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 	{
 		Rule.Required(id, "id");
 
-		var plan = await _planService.GetOne(id);
+		var plan = await planService.GetOne(id);
 		return Ok(plan);
 	}
 
@@ -124,10 +118,10 @@ public class PlanController(IPlanService planService) : ControllerBase, IPlanCon
 	[Route("")]
 	public async Task<IActionResult> GetMany([FromQuery] string? type)
 	{
-		if (type is not null) Rule.In(type, PlanType.All);
-		else type = PlanType.Main;
+		if (type is not null) { Rule.In(type, PlanType.All); }
+		else { type = PlanType.Main; }
 
-		var plans = await _planService.GetMany(type);
+		var plans = await planService.GetMany(type);
 		return Ok(plans);
 	}
 }

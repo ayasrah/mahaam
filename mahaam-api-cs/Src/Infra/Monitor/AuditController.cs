@@ -14,14 +14,12 @@ public interface IAuditController
 [ApiController]
 public class AuditController(ILog log, Settings settings) : ControllerBase, IAuditController
 {
-	private readonly ILog _log = log;
-	private readonly Settings _settings = settings;
-	[HttpPost]
+
 	[Route("error")]
 	public IActionResult Error([FromForm] string error)
 	{
 
-		_log.Error(error);
+		log.Error(error);
 		return StatusCode((int)HttpStatusCode.Created);
 	}
 
@@ -29,7 +27,7 @@ public class AuditController(ILog log, Settings settings) : ControllerBase, IAud
 	[Route("info")]
 	public IActionResult Info([FromForm] string info)
 	{
-		_log.Info($"{_settings.Api.Name}-v{_settings.Api.Version}: {info}");
+		log.Info($"{settings.Api.Name}-v{settings.Api.Version}: {info}");
 
 		return StatusCode((int)HttpStatusCode.Created);
 	}

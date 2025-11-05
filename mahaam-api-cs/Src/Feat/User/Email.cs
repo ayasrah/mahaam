@@ -13,17 +13,16 @@ public interface IEmail
 }
 public class Email(ILog log, Settings settings) : IEmail
 {
-	private readonly ILog _log = log;
-	private readonly Settings _settings = settings;
+
 	public void Init()
 	{
 		try
 		{
-			TwilioClient.Init(_settings.Email.AccountSid, _settings.Email.AuthToken);
+			TwilioClient.Init(settings.Email.AccountSid, settings.Email.AuthToken);
 		}
 		catch (Exception e)
 		{
-			_log.Error(e.ToString());
+			log.Error(e.ToString());
 		}
 	}
 
@@ -31,12 +30,12 @@ public class Email(ILog log, Settings settings) : IEmail
 	{
 		try
 		{
-			var verification = VerificationResource.Create(pathServiceSid: _settings.Email.VerificationServiceSid, to: email, channel: "email");
+			var verification = VerificationResource.Create(pathServiceSid: settings.Email.VerificationServiceSid, to: email, channel: "email");
 			return verification.Sid;
 		}
 		catch (Exception e)
 		{
-			_log.Error(e.ToString());
+			log.Error(e.ToString());
 		}
 		return null;
 	}
@@ -45,14 +44,14 @@ public class Email(ILog log, Settings settings) : IEmail
 	{
 		try
 		{
-			var check = VerificationCheckResource.Create(to: email, code: otp, verificationSid: sid, pathServiceSid: _settings.Email.VerificationServiceSid
+			var check = VerificationCheckResource.Create(to: email, code: otp, verificationSid: sid, pathServiceSid: settings.Email.VerificationServiceSid
 			// ,verificationSid:sid was not there
 			);
 			return check.Status;
 		}
 		catch (Exception e)
 		{
-			_log.Error(e.ToString());
+			log.Error(e.ToString());
 		}
 		return null;
 	}

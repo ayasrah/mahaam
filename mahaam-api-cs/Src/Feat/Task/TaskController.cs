@@ -19,13 +19,12 @@ public interface ITaskController
 [Route("plans/{planId}/tasks")]
 public class TaskController(ITaskService taskService) : ControllerBase, ITaskController
 {
-	private readonly ITaskService _taskService = taskService;
 	[HttpPost]
 	public async Task<IActionResult> Create(Guid planId, [FromForm] string title)
 	{
 		Rule.Required(planId, "planId");
 		Rule.Required(title, "title");
-		var id = await _taskService.Create(planId, title);
+		var id = await taskService.Create(planId, title);
 		return Created($"/plans/{planId}/tasks/{id}", id);
 	}
 
@@ -35,7 +34,7 @@ public class TaskController(ITaskService taskService) : ControllerBase, ITaskCon
 	{
 		Rule.Required(planId, "planId");
 		Rule.Required(id, "id");
-		await _taskService.Delete(planId, id);
+		await taskService.Delete(planId, id);
 		return NoContent();
 	}
 
@@ -46,7 +45,7 @@ public class TaskController(ITaskService taskService) : ControllerBase, ITaskCon
 		Rule.Required(planId, "planId");
 		Rule.Required(id, "id");
 		Rule.Required(done, "done");
-		await _taskService.UpdateDone(planId, id, done);
+		await taskService.UpdateDone(planId, id, done);
 		return Ok();
 	}
 
@@ -56,7 +55,7 @@ public class TaskController(ITaskService taskService) : ControllerBase, ITaskCon
 	{
 		Rule.Required(id, "id");
 		Rule.Required(title, "title");
-		await _taskService.UpdateTitle(id, title);
+		await taskService.UpdateTitle(id, title);
 		return Ok();
 	}
 
@@ -67,7 +66,7 @@ public class TaskController(ITaskService taskService) : ControllerBase, ITaskCon
 		Rule.Required(planId, "planId");
 		Rule.Required(oldOrder, "oldOrder");
 		Rule.Required(newOrder, "newOrder");
-		await _taskService.ReOrder(planId, oldOrder, newOrder);
+		await taskService.ReOrder(planId, oldOrder, newOrder);
 		return Ok();
 	}
 
@@ -76,7 +75,7 @@ public class TaskController(ITaskService taskService) : ControllerBase, ITaskCon
 	public async Task<IActionResult> GetMany(Guid planId)
 	{
 		Rule.Required(planId, "planId");
-		var result = await _taskService.GetList(planId);
+		var result = await taskService.GetList(planId);
 		return Ok(result);
 	}
 

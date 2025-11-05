@@ -8,12 +8,6 @@ namespace Mahaam.Infra;
 
 public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog log, IAuth authService, Settings settings, ICache cache)
 {
-	private readonly RequestDelegate _next = next;
-	private readonly ITrafficRepo _trafficRepo = trafficRepo;
-	private readonly ILog _log = log;
-	private readonly IAuth _authService = authService;
-	private readonly Settings _settings = settings;
-	private readonly ICache _cache = cache;
 	public async Task Invoke(HttpContext context)
 	{
 		var stopwatch = new Stopwatch();
@@ -26,17 +20,17 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 		try
 		{
 
-			if (_settings.LogReqEnabled)
+			if (settings.LogReqEnabled)
 			{
 				// expensive operation, only used if needed
 				context.Request.EnableBuffering();
 			}
 			AuthenticateReq(context);
-			await _next(context);
+			await next(context);
 		}
 		catch (Exception e)
 		{
-			if (_settings.LogReqEnabled)
+			if (settings.LogReqEnabled)
 			{
 				context.Request.Body.Position = 0;
 				request = await GetReqBody(context.Request);
@@ -67,7 +61,7 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 		string? appVersion = context.Request.Headers["x-app-version"];
 		if ((appStore == null || appVersion == null) && !path.StartsWith("/swagger"))
 		{
-			_log.Error($"Required headers not exists, appStore: {appStore}, appVersion: {appVersion}, path: {path}");
+			log.Error($"Required headers not exists, appStore: {appStore}, appVersion: {appVersion}, path: {path}");
 			throw new UnauthorizedException("Required headers not exists");
 		}
 		Req.AppStore = appStore!;
@@ -82,7 +76,7 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 
 		if (!bypassAuthPaths.Exists(path.StartsWith))
 		{
-			var (userId, deviceId, isLoggedIn) = _authService.ValidateAndExtractJwt(context);
+			var (userId, deviceId, isLoggedIn) = authService.ValidateAndExtractJwt(context);
 			Req.UserId = userId;
 			Req.DeviceId = deviceId;
 			Req.IsLoggedIn = isLoggedIn;
@@ -107,7 +101,7 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 			}
 		}
 
-		_log.Error(e.ToString());
+		log.Error(e.ToString());
 		context.Response.StatusCode = code;
 		context.Response.ContentType = MediaTypeNames.Application.Json;
 		await context.Response.WriteAsync(response);
@@ -152,9 +146,9 @@ public class AppMiddleware(RequestDelegate next, ITrafficRepo trafficRepo, ILog 
 			Headers = Newtonsoft.Json.JsonConvert.SerializeObject(headers),
 			Request = request,
 			Response = string.IsNullOrEmpty(response) ? null : response,
-			HealthId = _cache.HealthId()
+			HealthId = cache.HealthId()
 		};
-		_trafficRepo.Create(traffic);
+		trafficRepo.Create(traffic);
 	}
 
 	private static async Task<string?> GetReqBody(HttpRequest request)

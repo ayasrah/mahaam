@@ -20,15 +20,13 @@ public interface IPlanRepo
 
 public class PlanRepo(IDB db, ILog log) : IPlanRepo
 {
-	private readonly IDB _db = db;
-	private readonly ILog _log = log;
 	public async Task<Guid> Create(PlanIn plan)
 	{
 		var query = @"INSERT INTO plans (id, user_id, title, starts, ends, type, status, done_percent, sort_order, created_at)
 			VALUES (@Id, @UserId, @Title, @Starts, @Ends, @type, @status, '0/0', 
 			(SELECT COUNT(1) FROM plans WHERE user_id = @UserId AND type = @type), current_timestamp)";
 		var id = Guid.NewGuid();
-		await _db.Insert(query, new
+		await db.Insert(query, new
 		{
 			id,
 			plan.Title,
@@ -44,7 +42,7 @@ public class PlanRepo(IDB db, ILog log) : IPlanRepo
 	public async Task Update(PlanIn plan)
 	{
 		var query = "UPDATE plans SET title = @title, starts = @starts, ends = @ends, updated_at = current_timestamp WHERE id = @id";
-		await _db.Update(query, new { id = plan.Id, title = plan.Title, starts = plan.Starts, ends = plan.Ends });
+		await db.Update(query, new { id = plan.Id, title = plan.Title, starts = plan.Starts, ends = plan.Ends });
 	}
 
 	public async Task<Plan> GetOne(Guid id)
@@ -57,7 +55,7 @@ public class PlanRepo(IDB db, ILog log) : IPlanRepo
 			LEFT JOIN users u ON c.user_id = u.id
 			WHERE c.id = @id";
 
-		return await _db.SelectOne<Plan, User, Plan>(
+		return await db.SelectOne<Plan, User, Plan>(
 			query,
 			(plan, user) =>
 			{
@@ -83,7 +81,7 @@ public class PlanRepo(IDB db, ILog log) : IPlanRepo
 			WHERE c.user_id = @userId AND c.type = @type
 			ORDER BY c.sort_order DESC;";
 
-		return await _db.SelectMany<Plan, User, Plan>(
+		return await db.SelectMany<Plan, User, Plan>(
 			query,
 			(plan, user) =>
 			{
@@ -96,20 +94,20 @@ public class PlanRepo(IDB db, ILog log) : IPlanRepo
 
 	public async Task Delete(Guid id)
 	{
-		var count = await _db.Delete("DELETE FROM plans WHERE id = @id", new { id });
-		if (count > 0) _log.Info($"Plan {id} deleted");
+		var count = await db.Delete("DELETE FROM plans WHERE id = @id", new { id });
+		if (count > 0) log.Info($"Plan {id} deleted");
 	}
 
 	public async Task UpdateDonePercent(Guid id)
 	{
 		var query = "SELECT * FROM tasks WHERE plan_id = @id";
-		var tasks = await _db.SelectMany<Tasks.Task>(query, new { id });
+		var tasks = await db.SelectMany<Tasks.Task>(query, new { id });
 
 		var done = tasks.Count(task => task.Done);
 		var notDone = tasks.Count;
 		var donePercent = $"{done}/{notDone}";
 		var updatequery = "UPDATE plans SET done_percent = @donePercent WHERE id = @id";
-		await _db.Update(updatequery, new { donePercent, id });
+		await db.Update(updatequery, new { donePercent, id });
 	}
 
 	/// <summary>
@@ -123,7 +121,7 @@ public class PlanRepo(IDB db, ILog log) : IPlanRepo
 			UPDATE plans SET sort_order = sort_order - 1 
 			WHERE user_id = @userId AND type = (SELECT type FROM Plans WHERE id =@id) 
 				AND sort_order > (SELECT sort_order FROM plans WHERE id =@id)";
-		await _db.Update(query, new { userId, id });
+		await db.Update(query, new { userId, id });
 	}
 
 	public async Task UpdateOrder(Guid userId, string type, int oldOrder, int newOrder)
@@ -139,7 +137,7 @@ public class PlanRepo(IDB db, ILog log) : IPlanRepo
 			WHERE 
 				user_id = @userId AND 
 				type = @type";
-		var updated = await _db.Update(query, new { userId, type, oldOrder, newOrder });
+		var updated = await db.Update(query, new { userId, type, oldOrder, newOrder });
 		Console.WriteLine(updated);
 	}
 
@@ -148,13 +146,13 @@ public class PlanRepo(IDB db, ILog log) : IPlanRepo
 		var query = @"UPDATE plans SET type = @type, 
 			sort_order = (SELECT COUNT(1) FROM plans WHERE user_id = @userId AND type = @type), 
 			updated_at = current_timestamp WHERE id = @id";
-		await _db.Update(query, new { userId, id, type });
+		await db.Update(query, new { userId, id, type });
 	}
 
 	public async Task<int> GetCount(Guid userId, string type)
 	{
 		var queryCount = "SELECT COUNT(*) FROM plans WHERE user_id = @userId and type = @type";
-		var count = await _db.SelectOne<int>(queryCount, new { userId, type });
+		var count = await db.SelectOne<int>(queryCount, new { userId, type });
 		return count;
 	}
 
@@ -165,6 +163,6 @@ public class PlanRepo(IDB db, ILog log) : IPlanRepo
 			sort_order = (sort_order + (Select count(1) from plans where user_id=@newUserId)),
 			updated_at = current_timestamp 
 			WHERE user_id = @oldUserId";
-		return await _db.Update(query, new { oldUserId, newUserId });
+		return await db.Update(query, new { oldUserId, newUserId });
 	}
 }

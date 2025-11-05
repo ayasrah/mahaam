@@ -10,13 +10,10 @@ public interface IHealthService
 
 public class HealthService(IHealthRepo healthRepo, ILog log, Settings settings, ICache cache) : IHealthService
 {
-	private readonly IHealthRepo _healthRepo = healthRepo;
-	private readonly ILog _log = log;
-	private readonly Settings _settings = settings;
-	private readonly ICache _cache = cache;
+
 	public void ServerStarted(Health health)
 	{
-		_healthRepo.Create(health).GetAwaiter().GetResult();
+		healthRepo.Create(health).GetAwaiter().GetResult();
 	}
 
 	public void StartSendingPulses(CancellationToken cancellationToken = default)
@@ -27,12 +24,12 @@ public class HealthService(IHealthRepo healthRepo, ILog log, Settings settings, 
 			{
 				try
 				{
-					_healthRepo.UpdatePulse(_cache.HealthId());
+					healthRepo.UpdatePulse(cache.HealthId());
 					Thread.Sleep(1000 * 60); // 1 minute
 				}
 				catch (Exception e)
 				{
-					_log.Error(e.ToString());
+					log.Error(e.ToString());
 				}
 			}
 		}, cancellationToken);
@@ -44,13 +41,13 @@ public class HealthService(IHealthRepo healthRepo, ILog log, Settings settings, 
 		{
 			try
 			{
-				_healthRepo.UpdateStopped(_cache.HealthId());
-				var stopMsg = $"✓ {_settings.Api.Name}-v{_settings.Api.Version}/{_cache.NodeIP()}-{_cache.NodeName()} stopped with healthID={_cache.HealthId()}";
-				_log.Info(stopMsg);
+				healthRepo.UpdateStopped(cache.HealthId());
+				var stopMsg = $"✓ {settings.Api.Name}-v{settings.Api.Version}/{cache.NodeIP()}-{cache.NodeName()} stopped with healthID={cache.HealthId()}";
+				log.Info(stopMsg);
 			}
 			catch (Exception e)
 			{
-				_log.Error(e.ToString());
+				log.Error(e.ToString());
 			}
 		});
 		thread.Start();
