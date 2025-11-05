@@ -4,7 +4,7 @@
 
 Dependency Injection is giving classes the instances that depends on rather than letting these classes creating their dependencies inside.
 
-Dependnecies are usually interfaces (contracts) not classes.
+Dependencies are usually interfaces (contracts) not classes.
 
 ### Importance
 
@@ -22,7 +22,9 @@ Dependnecies are usually interfaces (contracts) not classes.
 public class PlanController(IPlanService planService) : ControllerBase, IPlanController
 {
 	// planService instance is injected to PlanController
-	// private readonly IPlanService _planService = new PlanService(); // This is dependency concrete creation (tightly coupled)
+
+	// Without dependency injection:
+	// private readonly IPlanService _planService = new PlanService(); // Concrete creation (tightly coupled)
 }
 
 // Which instance should be passed? configured in Program.cs:
@@ -48,7 +50,7 @@ type planHandler struct {
 func NewPlanHandler(service service.PlanService, logger logs.Logger) PlanHandler {
 	return &planHandler{planService: service, logger: logger}
 }
-// an instance of type PlanService is injected to PlanHandler in main using NewPlanHandler
+// an instance of type PlanService is injected to PlanHandler in main (wiring)
 ```
 
 ```TypeScript
