@@ -8,17 +8,17 @@ This page discusses code maintainability.
 
 **Code readability** is part of maintainability and its how the code is clear and self-explanatory.
 
-**Naming** is part of maintainability, and it refers to choosing clear, consistent, breaf and descriptive names for the **`app, modules, classes, functions, variables and db tables`**.
+**Naming** is part of maintainability, and it refers to choosing clear, consistent, brief and descriptive names for the **`app, modules, classes, functions, variables and db tables`**.
 
 ### Importance
 
-Maintainability is very important to cosider as it:
+Maintainability is very important to consider as it:
 
 - **Reduces Costs**: Lots of **time and efforts are wasted** because of unmaintainable code, which means wasted money.
 - **Increase Developer happiness**: Working on a clean and readable code is comfortable. From other side, when anyone's time and efforts are wasted, for sure will not be happy.
-- **Healthy Environment**: Clean, maintainable code reflects a good engineering culture and vise versa.
+- **Healthy Environment**: Clean, maintainable code reflects a good engineering culture and vice versa.
 - **Long-term Investment**: Code that's easy to maintain adapts better for people or technologies changes.
-- **Reduced technical debt**: Maintainability prevents accumilation of quick hacks.
+- **Reduced technical debt**: Maintainability prevents accumulation of quick hacks.
 - **Faster feature delivery**: A well-structured code makes adding/editing features easier.
 - **Faster onboarding**: New team members can understand the codebase quickly.
 
@@ -52,7 +52,7 @@ I saw apps that did part 1 and 2 very well (have well-defined user requirments a
 
 This is a main door that messes the readability, like long, vague, or unrelated names.
 
-- Choose Clear, consistent, breaf and descriptive names.
+- Choose Clear, consistent, brief and descriptive names.
 - Choose simple, short, meaningful names.
 - Start naming from domain, data models.
 - One word is better than two, two is better than three. Eg: App name (Mahaam): one descriptive word that means jobs or tasks. Module names: User, Plan, Task.
@@ -118,7 +118,7 @@ public interface ITaskController
 }
 ```
 
-#### 8. Consistency
+#### 9. Consistency
 
 Be consistent in:
 
@@ -126,10 +126,10 @@ Be consistent in:
 - Code format
 - Patterns used in the app
 
-#### 9. Enhance/Refactor/Reengineer
+#### 10. Enhance/Refactor/Reengineer
 
 Enhancements and refactoring are continous processes. In some cases, reengineering is needed, for the full app, a component, or even the DB. Pay this debt as soon as possible, to avoid building on broken foundations.
 
 ### Final word
 
-Code maintainability needs to pay attention to, especially in the AI era, things will easily be unmanged without rules, template, standards and patterns to follow.
+Code maintainability needs to pay attention to, especially in the AI era, things will easily be unmanaged without rules, template, standards and patterns to follow.

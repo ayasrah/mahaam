@@ -25,21 +25,26 @@ Caching is storing frequently accessed data in **memory**.
 ::: code-group
 
 ```C#
-class Cache
+public interface ICache
 {
-	public static void Init(Health health)
+	void Init(Health health);
+	string NodeIP();
+	string NodeName();
+	Guid HealthId();
+}
+
+class Cache : ICache
+{
+	private Health? _health;
+
+	public void Init(Health health)
 	{
 		_health = health;
 	}
 
-	private static Health? _health;
-
-	public static string NodeIP => _health?.NodeIP ?? "";
-	public static string NodeName => _health?.NodeName ?? "";
-	public static string ApiName => _health?.ApiName ?? "";
-	public static string ApiVersion => _health?.ApiVersion ?? "";
-	public static string EnvName => _health?.EnvName ?? "";
-	public static Guid HealthId => _health?.Id ?? Guid.Empty;
+	public string NodeIP() => _health?.NodeIP ?? "";
+	public string NodeName() => _health?.NodeName ?? "";
+	public Guid HealthId() => _health?.Id ?? Guid.Empty;
 }
 ```
 
@@ -47,62 +52,51 @@ class Cache
 @ApplicationScoped
 public class Cache {
 
-	public static void init(Health health) {
+	public void init(Health health) {
 		_health = health;
 	}
 
-	private static Health _health;
+	private Health _health;
 
-	public static String getNodeIP() {
+	public String nodeIP() {
 		return _health != null ? _health.nodeIP : "";
 	}
 
-	public static String getNodeName() {
+	public String nodeName() {
 		return _health != null ? _health.nodeName : "";
 	}
 
-	public static String getApiName() {
-		return _health != null ? _health.apiName : "";
-	}
-
-	public static String getApiVersion() {
-		return _health != null ? _health.apiVersion : "";
-	}
-
-	public static String getEnvName() {
-		return _health != null ? _health.envName : "";
-	}
-
-	public static UUID getHealthId() {
+	public UUID healthId() {
 		return _health != null ? _health.id : null;
 	}
 }
 ```
 
 ```Go
-var (
-	NodeIP     string
-	NodeName   string
-	ApiName    string
-	ApiVersion string
-	EnvName    string
-	HealthID   uuid.UUID
-)
+var env *Environment
 
-func Init(h *models.Health) {
-	NodeIP = h.NodeIP
-	NodeName = h.NodeName
-	ApiName = h.ApiName
-	ApiVersion = h.ApiVersion
-	EnvName = h.EnvName
-	HealthID = h.ID
+func Env() *Environment {
+	return env
+}
+
+func NewEnvironment(h *models.Health) {
+	env = &Environment{
+		NodeIP:   h.NodeIP,
+		NodeName: h.NodeName,
+		HealthID: h.ID,
+	}
+}
+
+type Environment struct {
+	NodeIP   string
+	NodeName string
+	HealthID uuid.UUID
 }
 ```
 
 ```TypeScript
 @Injectable()
 export class Cache {
-  private static readonly logger = new Logger(Cache.name);
   private static _health: Health | null = null;
 
   public static init(health: Health): void {
@@ -117,18 +111,6 @@ export class Cache {
     return this._health?.nodeName ?? '';
   }
 
-  public static getApiName(): string {
-    return this._health?.apiName ?? '';
-  }
-
-  public static getApiVersion(): string {
-    return this._health?.apiVersion ?? '';
-  }
-
-  public static getEnvName(): string {
-    return this._health?.envName ?? 'development';
-  }
-
   public static getHealthId(): string {
     return this._health?.id ?? '';
   }
@@ -136,23 +118,24 @@ export class Cache {
 ```
 
 ```Python
-node_ip = ""
-node_name = ""
-api_name = ""
-api_version = ""
-env_name = ""
-health_id = UUID(int=0)
+class Cache:
+    _health: Health | None = None
 
-def init(health: Health):
-    """Initialize cache with health object"""
-    global node_ip, node_name, api_name, api_version, env_name, health_id
-    node_ip = health.node_ip
-    node_name = health.node_name
-    api_name = health.api_name
-    api_version = health.api_version
-    env_name = health.env_name
-    health_id = health.id
+    @classmethod
+    def init(cls, health: Health) -> None:
+        cls._health = health
 
+    @classmethod
+    def node_ip(cls) -> str:
+        return cls._health.node_ip if cls._health else ""
+
+    @classmethod
+    def node_name(cls) -> str:
+        return cls._health.node_name if cls._health else ""
+
+    @classmethod
+    def health_id(cls) -> UUID:
+        return cls._health.id if cls._health else UUID(int=0)
 ```
 
 :::

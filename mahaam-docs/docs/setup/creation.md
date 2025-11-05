@@ -324,7 +324,7 @@ Swagger: http://localhost:7023/mahaam-docs
 
 ```md [Python]
 API: http://localhost:7023/mahaam-api
-Docs: http://localhost:7023/mahaam-api/docs
+Swagger: http://localhost:7023/mahaam-api/docs
 ```
 
 ::::

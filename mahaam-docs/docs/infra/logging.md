@@ -8,14 +8,16 @@ Logging is saving **events** done in the app to storage.
 
 ```log
 2025-08-01 03:00:10,187 INFO mahaam-api-v1.0 started on nodeIP=1.2.3.4 with healthID=8eeb192c-ffef-4830-8954-12c69d3d6b5d
-2025-08-01 03:10:58,187 INFO user created with id=2f7d68cd-0216-4b80-bdc2-de12d2a37099
-2025-08-01 03:20:58,187 ERROR max allowed plans reached for userID=5d3c0e60-5030-4dad-973b-0ba9b97f7d5b
+2025-08-01 03:10:58,187 INFO TrafficId: f0aed2a0-9cc9-4a5e-85aa-f15ad9337035, user created with id=2f7d68cd-0216-4b80-bdc2-de12d2a37099
+2025-08-01 03:20:58,187 ERROR TrafficId: 4e4d04d0-7bb3-47af-9e19-32aff5fda5b7, max allowed plans reached for userID=5d3c0e60-5030-4dad-973b-0ba9b97f7d5b
+2025-08-01 16:37:53.762 INFO TrafficId: dc1f92ac-7c96-4c02-aa44-31fe5707a3e9, OTP sent to abc@example.com
+
 ```
 
 ### Purpose
 
 - Monitor the app
-- Discover and fix errors
+- Debug and fix errors
 
 ### Saving Options
 

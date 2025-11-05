@@ -2,7 +2,7 @@
 
 ### Overview
 
-**Exceptions** are the errors occur during app execution.
+**Exceptions** are the errors that occur during app execution.
 
 **Exception Handling** is how the app manages these errors and the flow control.
 

@@ -20,10 +20,10 @@ Context clears when request ends. No data leaks between requests.
 
 Solves key problems:
 
-- **Tracing**: `TrafficId` enables end-to-end request tracking
-- **Logging**: Auto-include context in all logs
-- **Monitoring**: Request-scoped monitoring data
-- **Cleaner code**: User Info(`UserId, DeviceId`) is available throughout the request pipeline without parameter passing.Eliminates the need to pass context parameters through every function call
+- **Tracing**: `TrafficId` enables end-to-end request tracking.
+- **Logging**: Auto-include context in all logs.
+- **Monitoring**: Request-scoped monitoring data.
+- **Cleaner code**: Context variables (`UserId, DeviceId`,...) are available throughout the request pipeline without parameter passing. Eliminates the need to pass context parameters through every function call.
 
 Without request context, you would need to manually pass these values through every service, repository, and utility function, leading to polluted method signatures.
 

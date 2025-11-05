@@ -6,7 +6,7 @@ Mahaam security ensures that app is used safely, correctly, and only by trusted 
 
 ### Mahaam Security
 
-Mahaam provide anynomous user, by using device as identity. And provide email login with OTP.
+Mahaam provides anynomous user, by using device as identity. And provides email login with OTP.
 
 Mahaam uses JWT for authentication.
 

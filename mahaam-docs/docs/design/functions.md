@@ -6,7 +6,7 @@ App functions refer to **business and user needs**. Common names are: usecases, 
 
 ### Importance
 
-Understanding the right business and user needs is the first and last step of app creation. Its a continous process before, during, and after app creation. Always ask yourself, does this feature serve business needs or users needs, if not, maybe its useless even though its smart.
+Understanding the right business and user needs is the first and last step of app creation. It's a continous process before, during, and after app creation. Always ask yourself, does this feature serve business needs or users needs, if not, maybe its useless even though its smart.
 
 ### Steps
 

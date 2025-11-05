@@ -11,9 +11,9 @@ Having a template is important because it defines **what goes where**, making bo
 - Maintainability and readability
 - Avoiding overengineering and spaghetti code
 
-### Archeticture Options
+### Architecture Options
 
-Its worthy to mention these common archetictures in this context:
+Its worthy to mention these common Architectures in this context:
 
 - **Monolith App**: Codebase is split by layers under one project, and deployed as one unit.
 - **Modular monolith App**: Codebase is splitted into modules with clear boundaries under a single project, and still deployed as a single unit.
@@ -127,6 +127,6 @@ app-be/
 
 ### Go case
 
-**Folding by feature in Go** is not straight forward while keeping interfaces in same file such what been did in `C#, Java, TS, and Python`, as it will cause **circular dependences issue** (eg: btw user and plan modules), thats why mahaam chose to fold by layer for Go project and its good change to show the app in layer structure as well.
+**Folding by feature in Go** is not straight forward while keeping interfaces in same file such what been did in `C#, Java, TS, and Python`, as it will cause **circular dependences issue** (eg: between user and plan modules), that's why mahaam chose to fold by layer for Go project and its good change to show the app in layer structure as well.
 
-Another point in `mahaam-api-go` is placing every infra file in its own folder, and that is because in go each folder is a package, and its not allowed two files under same folder to have different packages. Mahaam needs to group and call infra utilities by their modules like: `cache.AppName`, `email.SendMeOtp`, `config.DBUrl`. Keeping all files flat under infra will not give us this, instead it will be `infra.AppName`, `infra.SendMeOtp`, `infra.DBUrl`, which mixes all functions together, thats why each file placed in its own folder.
+Another point in `mahaam-api-go` is placing every infra file in its own folder, and that is because in go each folder is a package, and its not allowed two files under same folder to have different packages. Mahaam needs to group and call infra utilities by their modules like: `cache.AppName`, `email.SendMeOtp`, `config.DBUrl`. Keeping all files flat under infra will not give us this, instead it will be `infra.AppName`, `infra.SendMeOtp`, `infra.DBUrl`, which mixes all functions together, that's why each file placed in its own folder.

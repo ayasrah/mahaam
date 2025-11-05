@@ -29,7 +29,7 @@ export default defineConfig({
       "/": [
         {
           text: "",
-          items: [{ text: "Home", link: "/" }],
+          items: [{ text: "Overview", link: "/" }],
         },
         {
           text: "Service Setup",

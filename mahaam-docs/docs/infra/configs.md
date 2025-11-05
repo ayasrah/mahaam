@@ -44,29 +44,83 @@ Mahaam expose these configs from `infra/configs`:
 
 ```C#
 
-public class Config
+public class Settings
 {
-    public static string DbUrl => GetValue("dbUrl");
-    public static string HttpPort => GetValue("httpPort");
+	public ApiSettings Api { get; set; }
+	public EmailSettings Email { get; set; }
+	public LoggingSettings Logging { get; set; }
+	public string DbUrl { get; set; }
+	public bool LogReqEnabled { get; set; }
+}
 
-    private static string GetValue(string key)
-    {
-        return _configuration[key] ?? throw new ArgumentException($"Config key '{key}' not found.");
-    }
+public class LoggingSettings
+{
+	public string File { get; set; }
+	public int FileSizeLimit { get; set; }
+	public int FileCountLimit { get; set; }
+	public string OutputTemplate { get; set; }
+}
+
+public class EmailSettings
+{
+	public string AccountSid { get; set; }
+	public string VerificationServiceSid { get; set; }
+	public string AuthToken { get; set; }
+	public List<string> TestEmails { get; set; }
+	public string TestSID { get; set; }
+	public string TestOTP { get; set; }
+}
+
+
+public class ApiSettings
+{
+	public string Name { get; set; }
+	public string Version { get; set; }
+	public string EnvName { get; set; }
+	public int HttpPort { get; set; }
+	public string TokenSecretKey { get; set; }
 }
 ```
 
 ```Java
-public class Config {
-    public static final String dbUrl = ConfigProvider.getConfig().getValue("dbUrl", String.class);
-    public static final String httpPort = ConfigProvider.getConfig().getValue("httpPort", String.class);
+@StaticInitSafe
+@ConfigMapping(prefix = "mahaam", namingStrategy = ConfigMapping.NamingStrategy.VERBATIM)
+public interface Config {
+	String apiName();
+	String apiVersion();
+	String envName();
+	String dbUrl();
+	String tokenSecretKey();
+	String emailAccountSid();
+	String emailVerificationServiceSid();
+	String emailAuthToken();
+	List<String> testEmails();
+	String testSID();
+	String testOTP();
+	Boolean logReqEnabled();
 }
 ```
 
 ```Go
-type config struct {
-    DBUrl          string
-    HTTPPort       int
+type Conf struct {
+	ApiName                     string
+	ApiVersion                  string
+	EnvName                     string
+	DBUrl                       string
+	LogFile                     string
+	LogFileSizeLimit            int
+	LogFileCountLimit           int
+	LogFileOutputTemplate       string
+	LogFileRollingInterval      string
+	HTTPPort                    int
+	TokenSecretKey              string
+	EmailAccountSID             string
+	EmailVerificationServiceSID string
+	EmailAuthToken              string
+	TestEmails                  []string
+	TestSID                     string
+	TestOTP                     string
+	LogReqEnabled               bool
 }
 ```
 
@@ -96,14 +150,14 @@ Mahaam expose configs through single utility as follows
 ::: code-group
 
 ```C#
-var cnn = new NpgsqlConnection(Config.DbUrl); // DB conn
+var cnn = new NpgsqlConnection(settings.DbUrl); // DB conn
 builder.WebHost.UseKestrel(opts => {
-    opts.Listen(IPAddress.Parse("0.0.0.0"), Config.port); // Service port
+    opts.Listen(IPAddress.Parse("0.0.0.0"), settings.Api.HttpPort); // Service port
 });
 ```
 
 ```Java
-if (Config.testEmails.contains(email)) {
+if (config.testEmails().contains(email)) {
 	verifySid = Config.testSID;
 } else {
 	verifySid = Email.sendOtp(email);
