@@ -15,6 +15,7 @@ public interface IAuditController
 public class AuditController(ILog log, Settings settings) : ControllerBase, IAuditController
 {
 
+	[HttpPost]
 	[Route("error")]
 	public IActionResult Error([FromForm] string error)
 	{
