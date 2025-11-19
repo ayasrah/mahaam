@@ -5,7 +5,7 @@ export default defineConfig({
   description: "Mahaam app docs",
   cleanUrls: true,
   head: [
-    ["link", { rel: "icon", href: "/logo.png" }],
+    ["link", { rel: "icon", href: "/logo.jpg" }],
     ["link", { rel: "preconnect", href: "https://fonts.googleapis.com" }],
     ["link", { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" }],
     [
@@ -19,7 +19,7 @@ export default defineConfig({
 
   themeConfig: {
     // Logo
-    logo: "/logo.png",
+    logo: "/logo.jpg",
 
     // Navigation
     nav: [],
@@ -29,7 +29,7 @@ export default defineConfig({
       "/": [
         {
           text: "",
-          items: [{ text: "Overview", link: "/" }],
+          items: [{ text: "Overview", link: "/overview" }],
         },
         {
           text: "Service Setup",
