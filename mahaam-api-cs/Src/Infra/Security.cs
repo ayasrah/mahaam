@@ -63,7 +63,7 @@ public class Auth(IDeviceRepo deviceRepo, IUserRepo userRepo, Settings settings)
 					new Claim("userId", userId),
 					new Claim("deviceId", deviceId),
 				]),
-				Expires = DateTime.Now.Add(TimeSpan.FromDays(7)),
+				Expires = DateTime.Now.Add(TimeSpan.FromDays(365)),
 				SigningCredentials = creds,
 				IssuedAt = DateTime.Now,
 				Issuer = "mahaam-api",
