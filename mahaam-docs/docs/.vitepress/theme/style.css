@@ -6,6 +6,14 @@
   height: 50px !important;
 }
 
+.divider {
+  height: 1px !important;
+}
+
+.VPNavBarTitle .title {
+  border-bottom: none !important;
+}
+
 .VPDoc .content {
   font-family: "ui-sans-serif", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
   font-size: 16px;
@@ -105,7 +113,6 @@
 .VPSocialLink span {
   width: 23px !important;
   height: 23px !important;
-  color: #545454 !important;
 }
 
 .dark .VPSocialLink svg,
@@ -153,7 +160,8 @@
 
 /* Style the GitHub social link to match the star button */
 .VPSocialLinks .VPSocialLink:first-child {
-  background: linear-gradient(180deg, #fafbfc 0%, #eff3f6 90%) !important;
+  /* background: linear-gradient(180deg, #fafbfc 0%, #eff3f6 90%) !important; */
+  background: transparent !important;
   border: 1px solid #d1d9e0 !important;
   border-radius: 8px !important;
   padding: 1px 10px !important;
@@ -180,7 +188,8 @@
 
 /* Dark theme support for GitHub social link */
 .dark .VPSocialLinks .VPSocialLink:first-child {
-  background: linear-gradient(180deg, #30363d 0%, #21262d 90%) !important;
+  /* background: linear-gradient(180deg, #30363d 0%, #21262d 90%) !important; */
+  background: transparent !important;
   border-color: #30363d !important;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
 }
@@ -188,4 +197,93 @@
 .dark .VPSocialLinks .VPSocialLink:first-child span,
 .dark .VPSocialLinks .VPSocialLink:first-child svg {
   color: #f0f6fc !important;
+}
+
+.VPHero .VPImage {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+/* Center hero content horizontally */
+.VPHero .container,
+.VPHomeHero .container {
+  text-align: center;
+}
+
+.VPHero .main,
+.VPHomeHero .main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 100%;
+}
+
+.VPHero .name,
+.VPHomeHero .name,
+.VPHero .text,
+.VPHomeHero .text,
+.VPHero .tagline,
+.VPHomeHero .tagline {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.VPHero .name .clip,
+.VPHomeHero .name .clip,
+.VPHero .text,
+.VPHomeHero .text {
+  display: block;
+  text-align: center !important;
+  width: 100%;
+}
+
+.VPHero .actions,
+.VPHomeHero .actions {
+  justify-content: center;
+}
+
+/* Center features section */
+.VPFeatures,
+.VPHomeFeatures {
+  display: flex;
+  justify-content: center;
+}
+
+.VPFeatures .container,
+.VPHomeFeatures .container {
+  display: flex;
+  justify-content: center;
+}
+
+.VPFeatures .items,
+.VPHomeFeatures .items {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.VPSwitch {
+  border: 1px solid transparent !important;
+}
+
+.DocSearch-Button .DocSearch-Button-Key {
+  border: 1px solid transparent !important;
+}
+
+.VPHero .tagline,
+.VPHomeHero .tagline {
+  font-size: 15px !important;
+}
+
+.VPHero .text,
+.VPHomeHero .text {
+  font-size: 35px !important;
+}
+
+@media (min-width: 640px) {
+  .tagline {
+    max-width: 650px !important;
+  }
 }

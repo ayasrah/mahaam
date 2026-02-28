@@ -1,8 +1,8 @@
-# Security
+# Microservices Security
 
 ### Overview
 
-Mahaam security ensures that app is used safely, correctly, and only by trusted users.
+Microservices security ensures that app is used safely, correctly, and only by trusted users.
 
 ### Mahaam Security
 

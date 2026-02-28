@@ -1,8 +1,8 @@
-# Mahaam Infra
+# Microservices Infra
 
 ### Overview
 
-Mahaam Infra is the utility classes used by the whole modules. Eg: `DB`, `Log`, `Config` utilities.
+Microservices Infra is the utility classes used by the whole modules. Eg: `DB`, `Log`, `Config` utilities.
 
 ### Purpose
 

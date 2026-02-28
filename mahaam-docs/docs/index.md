@@ -2,13 +2,13 @@
 layout: home
 
 hero:
-  name: Mahaam
-  text: A Guide To Backend Services
-  tagline: Supports C#, Java, Go, TypeScript and Python
-  image:
-    light: /logo.jpg
-    dark: /logo_dark.png
-    alt: Mahaam
+  name: Microservices Basics
+  text: Open-source App
+  tagline: Based on a live and open-source app written in C#, Java, Go, TypeScript and Python
+  #   image:
+  #     light: /logo.jpg
+  #     dark: /logo_dark.png
+  #     alt: Mahaam
   actions:
     - theme: brand
       text: Get Started
@@ -18,19 +18,19 @@ hero:
       link: https://github.com/ayasrah/mahaam
 
 features:
-  - title: Service Setup
-    details: Service creation
+  - title: Microservices Setup
+    details: Microservices creation
     link: /setup/creation
-  - title: Service Design
+  - title: Microservices Design
     details: Functionality, data model, api design, and maintainability
     link: /design/intro
-  - title: Service Module
+  - title: Microservices Modules
     details: Controllers, services, models and repositories.
     link: /module/intro
-  - title: Service Infra
-    details: Service utilities
+  - title: Microservices Infra
+    details: Microservices utilities
     link: /infra/intro
-  - title: Service Testing
+  - title: Microservices Testing
     details: Integration testing
     link: /test/test
 ---

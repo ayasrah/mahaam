@@ -1,8 +1,8 @@
-# Transaction Management
+# Transactions Management
 
 ### Overview
 
-Transaction management is treating a set of db operations as a single unit, **all succeed or none**.
+Transactions management is treating a set of db operations as a single unit, **all succeed or none**.
 
 ### Purpose
 

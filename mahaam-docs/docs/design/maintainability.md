@@ -1,8 +1,8 @@
-# Maintainability
+# Microservices Maintainability
 
 ### Overview
 
-This page discusses code maintainability.
+This page discusses microservices maintainability.
 
 **Code maintainability** is how easily code can be understood, updated, fixed and extended over time.
 

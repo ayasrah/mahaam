@@ -1,8 +1,8 @@
-# Mahaam System Design
+# Microservices Design
 
 ### Overview
 
-This section discusses some of Mahaam system design aspects.
+This section discusses some of Mahaam microservices design aspects.
 
 ### Purpose
 

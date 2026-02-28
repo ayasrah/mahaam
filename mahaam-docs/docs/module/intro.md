@@ -1,4 +1,4 @@
-# Modules
+# Microservices Modules
 
 ### Overview
 
@@ -12,11 +12,11 @@ This section discusses module internal parts.
 - Folding by modules highly enhances readability and maintainability.
 - Mahaam has 3 business modules: Plan, Task and User, and one infra module which is monitoring.
 
-### Module Parts
+### Module Layers
 
-This is the vertical slice that a module cosists of:
+these are the layers (vertical slice) that a module cosists of:
 
-- Controllers: Module APIs.
-- Services: Module business logic.
-- Repos: Database access layer.
+- Controller Layer: Module APIs.
+- Service Layer: Module business logic.
+- Repo Layer: Database access layer.
 - Models: Data models and DTOs.
